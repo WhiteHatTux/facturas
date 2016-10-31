@@ -11,7 +11,7 @@ interface FacturaService {
 
     String getOwner(Integer account)
 
-    Map<String, String> getSummary(Integer account)
+    Map<String, String> getSummary(Integer account, boolean forceReload)
 
     String getIdentification(Integer account)
 

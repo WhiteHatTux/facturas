@@ -1,6 +1,7 @@
 package de.ctimm.service
 
 import de.ctimm.domain.Bill
+import de.ctimm.domain.BillRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,20 +23,25 @@ class FacturaServiceImpl implements FacturaService {
 
     private static final Logger logger = LoggerFactory.getLogger(FacturaServiceImpl.class);
 
-    private ResponseParser responseParser;
+    private ResponseParser responseParser
 
-    private RestOperations restTemplate;
+    private RestOperations restTemplate
+
+    private BillRepository billRepository
 
     Bill bill
 
+    boolean forceReload = false
+
     @Autowired
-    FacturaServiceImpl(ResponseParser responseParser, RestOperations restTemplate) {
+    FacturaServiceImpl(ResponseParser responseParser, RestOperations restTemplate, BillRepository billRepository) {
         this.responseParser = responseParser
         this.restTemplate = restTemplate
+        this.billRepository = billRepository
     }
 
     void getLastComprobante(Integer account) {
-        if (bill == null || bill.xml == null || bill.account != account) {
+        if (billRepository.getBill(account) == null || forceReload) {
             //account = 194799
             String url = "http://www1.eeasa.com.ec:8080/FacturaElec/listadoFE.jsp"
 
@@ -49,11 +55,11 @@ class FacturaServiceImpl implements FacturaService {
                     map,
                     String.class)
             List<Bill> bills = responseParser.getBills(html, account)
-            bill = bills[0]
-            bill.xml = responseParser.getXml(bill)
-        } else {
-            return
+            Bill bill2 = bills[0]
+            bill2.xml = responseParser.getXml(bill2)
+            billRepository.addBill(bill2)
         }
+        bill = billRepository.getBill(account)
     }
 
     @Override
@@ -87,8 +93,9 @@ class FacturaServiceImpl implements FacturaService {
     }
 
     @Override
-    Map<String, String> getSummary(Integer account) {
-        logger.info("Start creating summary for {}", account)
+    Map<String, String> getSummary(Integer account, boolean forceReload) {
+        this.forceReload = forceReload
+        logger.debug("Start creating summary for {}", account)
         Map<String, String> values = new HashMap<>()
         values.put("Owner", getOwner(account))
         values.put("Identification", getIdentification(account))
@@ -96,7 +103,7 @@ class FacturaServiceImpl implements FacturaService {
         values.put("Total", String.valueOf(getTotalAmount(account)))
         values.put("Issued", getIssueDate(account).toString())
 
-        logger.info("Finished summary creation for {}", account)
+        logger.debug("Finished summary creation for {}", account)
         return values
     }
 }

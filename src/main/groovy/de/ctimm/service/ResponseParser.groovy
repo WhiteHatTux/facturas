@@ -66,7 +66,7 @@ class ResponseParser {
                 .select("tr")
 
         for (int i = 1; i < jsoupBills.indexOf(jsoupBills.last()); i++) {
-            Bill bill = new Bill()
+            Bill bill = new Bill(account)
             Elements jsoupBill = jsoupBills.get(i).select("td")
             bill.number = jsoupBill.get(0).text().replace("FACTURA", "").trim()
             String[] date = jsoupBill.get(1).text().replace("Emitido: ", "").replaceAll("Mes consumo.*", "").split("-")
@@ -78,7 +78,6 @@ class ResponseParser {
             bill.dateOfAuthorization = Timestamp.valueOf(jsoupBill.get(3).text().split("Autoriza")[0].replace("Fecha: ", "").replace("T", " ").replace("-05:00", ""))
             bill.xmlNumber = Integer.valueOf(jsoupBill.get(4).select("font").first().select("a").first().attributes().first().value.split("=")[1])
             bill.owner = owner
-            bill.account = account
             billsList.add(bill)
         }
         return billsList

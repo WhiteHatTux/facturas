@@ -42,7 +42,7 @@ class ResponseParserTest extends GroovyTestCase {
         Mockito.when(restTemplate.getForObject(dummyHost + dummyPath + xmlNumber, String.class))
                 .thenReturn(testBill)
         ResponseParser responseParser = new ResponseParser(restTemplate, dummyHost, dummyPath);
-        Bill bill = new Bill()
+        Bill bill = new Bill(6069973)
         bill.xmlNumber = xmlNumber
         bill.accessKey = 1810201601189000143900120010120043984740439847414
         def actualxml = responseParser.getXml(bill)
