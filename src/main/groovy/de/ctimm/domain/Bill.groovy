@@ -7,6 +7,7 @@ import java.sql.Timestamp
  *
  */
 class Bill {
+    Date collectionTimestamp = new Date()
     Integer account
     String owner
     String number
@@ -16,4 +17,10 @@ class Bill {
     def xml
     Integer xmlNumber
 
+    Bill(Integer account) {
+        this.account = account
+    }
+
+    protected Bill(){
+    }
 }

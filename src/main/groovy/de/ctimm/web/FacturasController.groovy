@@ -51,9 +51,26 @@ class FacturasController {
     ResponseEntity<Map<String, String>> getSummary(
             @PathVariable Integer account
     ) {
+        def start = System.currentTimeMillis()
         logger.info("Start creating summary for {}", account)
-        Map<String, String> values = facturaService.getSummary(account)
+        Map<String, String> values = facturaService.getSummary(account, false)
         logger.info("Finished summary creation for {}", account)
+        def stop = System.currentTimeMillis()
+        logger.info("Execution took {} milliseconds", stop - start)
+        return new ResponseEntity<Map<String, String>>(values, HttpStatus.OK)
+
+    }
+
+    @RequestMapping(value = "/force/{account}", method = RequestMethod.GET)
+    ResponseEntity<Map<String, String>> getSummaryForceReload(
+            @PathVariable Integer account
+    ) {
+        def start = System.currentTimeMillis()
+        logger.info("Start creating summary for {}", account)
+        Map<String, String> values = facturaService.getSummary(account, true)
+        logger.info("Finished summary creation for {}", account)
+        def stop = System.currentTimeMillis()
+        logger.info("Execution took {} milliseconds", stop - start)
         return new ResponseEntity<Map<String, String>>(values, HttpStatus.OK)
 
     }

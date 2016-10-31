@@ -1,5 +1,6 @@
 package de.ctimm.service
 
+import de.ctimm.domain.BillRepository
 import org.junit.Before
 import org.mockito.Mockito
 import org.springframework.web.client.RestOperations
@@ -15,10 +16,11 @@ import static org.mockito.Mockito.when
  */
 class FacturaServiceTest extends GroovyTestCase {
 
-    RestOperations restTemplateFactura;
-    RestOperations restTemplateResponseParser;
-    ResponseParser responseParser;
-    FacturaService facturaService;
+    RestOperations restTemplateFactura
+    RestOperations restTemplateResponseParser
+    ResponseParser responseParser
+    FacturaService facturaService
+    BillRepository billRepository
     Integer testAccount = 194799
 
     String testResponse = this.getClass().getResource("/testResponse.html").text
@@ -29,10 +31,11 @@ class FacturaServiceTest extends GroovyTestCase {
     void setUp() {
         restTemplateFactura = mock(RestOperations.class)
         restTemplateResponseParser = mock(RestOperations.class)
+        billRepository = new BillRepository()
         when(restTemplateFactura.postForObject(anyString(), Mockito.any(), eq(String.class))).thenReturn(testResponse)
         when(restTemplateResponseParser.getForObject(anyString(), eq(String.class))).thenReturn(testBill)
         responseParser = new ResponseParser(restTemplateResponseParser, "dummyhost", "dummypath")
-        facturaService = new FacturaServiceImpl(responseParser, restTemplateFactura)
+        facturaService = new FacturaServiceImpl(responseParser, restTemplateFactura, billRepository)
 
     }
 
@@ -57,7 +60,7 @@ class FacturaServiceTest extends GroovyTestCase {
     }
 
     void testGetSummary() {
-        def actualresult = facturaService.getSummary(testAccount)
+        def actualresult = facturaService.getSummary(testAccount, false)
         Map<String, String> expectedResult = new HashMap<>()
         expectedResult.put("Total", "27.51")
         expectedResult.put("Identification", "0200989077")
