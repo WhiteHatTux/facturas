@@ -18,9 +18,7 @@ class BillRepository {
         if (bill == null) {
             return null
         } else {
-            TimeDuration td = TimeCategory.minus(new Date(), bill.collectionTimestamp)
-            if (td.getHours() > 23 || td.getDays() > 0) {
-                billRepository.remove(account)
+            if (isExpired(bill)){
                 return null
             }
         }

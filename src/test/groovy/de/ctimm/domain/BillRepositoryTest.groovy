@@ -1,6 +1,5 @@
 package de.ctimm.domain
 
-import groovy.time.BaseDuration
 import groovy.time.Duration
 import groovy.time.TimeCategory
 
@@ -14,8 +13,7 @@ class BillRepositoryTest extends GroovyTestCase {
     void testGetBillNull() {
         Integer account = 194799
         Bill bill = new Bill(194799)
-        Date original = bill.collectionTimestamp
-        bill.collectionTimestamp = TimeCategory.minus(bill.collectionTimestamp, new Duration(1,0,0,0,0))
+        bill.collectionTimestamp = TimeCategory.minus(bill.collectionTimestamp, new Duration(1, 0, 0, 0, 0))
         billRepository.addBill(bill)
         Bill newBill = billRepository.getBill(account)
         assertNull(newBill)
@@ -28,5 +26,13 @@ class BillRepositoryTest extends GroovyTestCase {
         billRepository.addBill(bill)
         Bill newBill = billRepository.getBill(account)
         assertTrue(newBill.collectionTimestamp == original)
+    }
+
+    void testExpire() {
+        Bill bill = new Bill(194799)
+        bill.collectionTimestamp = TimeCategory.minus(bill.collectionTimestamp, new Duration(1, 0, 0, 0, 0))
+        billRepository.addBill(bill)
+        billRepository.removeExpired()
+        assertEquals(Collections.emptyMap(), billRepository.billRepository)
     }
 }
