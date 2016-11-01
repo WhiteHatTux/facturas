@@ -3,6 +3,8 @@ package de.ctimm.dao
 import de.ctimm.domain.Bill
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component
 @Component
 class BillRepository {
     Map<Integer, Bill> billRepository = new HashMap<>()
+    private static final Logger logger = LoggerFactory.getLogger(BillRepository.class);
 
     Bill getBill(Integer account) {
         Bill bill = billRepository.get(account)
@@ -40,10 +43,13 @@ class BillRepository {
         }
     }
 
-    @Scheduled(fixedRate = 500000L)
+    // Run once an hour
+    @Scheduled(cron = "0 0 * * * *")
     void removeExpired() {
         billRepository.each { Integer account, Bill bill ->
-            isExpired(bill)
+            if (isExpired(bill)){
+                logger.info("Bill {} was removed, because it is expired", bill.account)
+            }
         }
     }
 

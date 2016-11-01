@@ -1,10 +1,13 @@
 package de.ctimm.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
  *
  */
 class Owner {
+    @JsonIgnore
     Date collectionTimestamp = new Date()
     Integer account
     String name
