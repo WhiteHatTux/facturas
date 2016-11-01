@@ -2,6 +2,7 @@ package de.ctimm.service
 
 import de.ctimm.dao.BillDao
 import de.ctimm.dao.BillRepository
+import de.ctimm.dao.OwnerRepository
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import org.slf4j.Logger
@@ -26,6 +27,8 @@ class FacturaServiceImpl implements FacturaService {
 
     private BillRepository billRepository
 
+    private OwnerRepository ownerRepository
+
     private BillDao billDao
 
     Bill bill
@@ -35,10 +38,11 @@ class FacturaServiceImpl implements FacturaService {
     boolean forceReload = false
 
     @Autowired
-    FacturaServiceImpl(ResponseParser responseParser, BillRepository billRepository, BillDao billDao) {
+    FacturaServiceImpl(ResponseParser responseParser, BillRepository billRepository, BillDao billDao, OwnerRepository ownerRepository) {
         this.responseParser = responseParser
         this.billRepository = billRepository
         this.billDao = billDao
+        this.ownerRepository = ownerRepository
     }
 
     void getLastComprobante(Integer account) {
@@ -53,7 +57,11 @@ class FacturaServiceImpl implements FacturaService {
     }
 
     Owner getOwner(Integer account) {
-        owner = responseParser.getOwnerInformation(account)
+        if (ownerRepository.getOwner(account) == null || forceReload) {
+            owner = responseParser.getOwnerInformation(account)
+            ownerRepository.addOwner(owner)
+        }
+        owner = ownerRepository.getOwner(account)
     }
 
     @Override

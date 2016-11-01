@@ -67,9 +67,9 @@ class ResponseParserTest extends GroovyTestCase {
         Integer testAccount = 194799
         Owner owner = responseParser.getOwnerInformation(testAccount)
 
-        assertEquals("robertopablolopez@yahoo.es",owner.email)
-        assertEquals("LOPEZ ESCOBAR  ROBERTO PABLO ",owner.name)
-        assertEquals("0987614298", owner.cellphone )
+        assertEquals("robertopablolopez@yahoo.es", owner.email)
+        assertEquals("LOPEZ ESCOBAR  ROBERTO PABLO ", owner.name)
+        assertEquals("0987614298", owner.cellphone)
         assertEquals("2845555", owner.phone)
 
     }

@@ -5,6 +5,7 @@ package de.ctimm.domain
  *
  */
 class Owner {
+    Date collectionTimestamp = new Date()
     Integer account
     String name
     String email
