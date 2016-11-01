@@ -2,6 +2,7 @@ package de.ctimm.service
 
 import de.ctimm.dao.BillDao
 import de.ctimm.dao.BillRepository
+import de.ctimm.dao.OwnerRepository
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import org.junit.Before
@@ -19,6 +20,7 @@ class FacturaServiceTest extends GroovyTestCase {
     ResponseParser responseParser
     FacturaService facturaService
     BillRepository billRepository
+    OwnerRepository ownerRepository
     BillDao billDao
     Integer testAccount = 194799
 
@@ -38,8 +40,9 @@ class FacturaServiceTest extends GroovyTestCase {
         when(billDao.getOwnerHtml(anyInt())).thenReturn(testNotificationData)
 
         billRepository = new BillRepository()
+        ownerRepository = new OwnerRepository()
         responseParser = new ResponseParser(billDao)
-        facturaService = new FacturaServiceImpl(responseParser, billRepository, billDao)
+        facturaService = new FacturaServiceImpl(responseParser, billRepository, billDao, ownerRepository)
 
     }
 
@@ -67,8 +70,14 @@ class FacturaServiceTest extends GroovyTestCase {
         Owner actualResultOwner = facturaService.getOwner(testAccount)
         Owner expectedResultOwner = createTestOwner()
 
-        actualResultOwner.properties.each { def key, def value ->
-            assertEquals(expectedResultOwner.(key.toString()), value)
+        compareOwners(expectedResultOwner, actualResultOwner)
+    }
+
+    static void compareOwners(Owner expected, Owner actual) {
+        actual.properties.each { def key, def value ->
+            if (key != "collectionTimestamp") {
+                assertEquals(expected.(key.toString()), value)
+            }
         }
     }
 
@@ -92,9 +101,7 @@ class FacturaServiceTest extends GroovyTestCase {
         expectedResult.put("Owner", expectedResultOwner)
         expectedResult.put("Issued", "2016-10-18 00:00:00.0")
 
-        actualResult.get("Owner").properties.each { def key, def value ->
-            assertEquals(expectedResultOwner.(key.toString()), value)
-        }
+        compareOwners(expectedResultOwner, (Owner) actualResult.get("Owner"))
         assertEquals(expectedResult, actualResult)
     }
 }
