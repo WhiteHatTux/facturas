@@ -43,27 +43,27 @@ class FacturasController {
             @PathVariable Integer account
     ) {
         logger.info("Start creating Owner for {}", account)
-        String owner = facturaService.getOwner(account);
+        String owner = facturaService.getOwnerName(account);
         return new ResponseEntity<String>(owner, HttpStatus.OK)
     }
 
     @RequestMapping(value = "/{account}", method = RequestMethod.GET)
-    ResponseEntity<Map<String, String>> getSummary(
+    ResponseEntity<Map<String, Object>> getSummary(
             @PathVariable Integer account
     ) {
         logger.info("Start creating summary for {}", account)
         Map<String, String> values = facturaService.getSummary(account, false)
         logger.info("Finished summary creation for {}", account)
-        return new ResponseEntity<Map<String, String>>(values, HttpStatus.OK)
+        return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
 
     @RequestMapping(value = "/force/{account}", method = RequestMethod.GET)
-    ResponseEntity<Map<String, String>> getSummaryForceReload(
+    ResponseEntity<Map<String, Object>> getSummaryForceReload(
             @PathVariable Integer account
     ) {
         logger.info("Start creating summary for {}", account)
         Map<String, String> values = facturaService.getSummary(account, true)
         logger.info("Finished summary creation for {}", account)
-        return new ResponseEntity<Map<String, String>>(values, HttpStatus.OK)
+        return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
 }

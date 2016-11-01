@@ -18,10 +18,9 @@ class ControllerMonitor {
     private static final Logger logger = LoggerFactory.getLogger(ControllerMonitor.class)
 
     @Around("execution(* de..*Controller.*(..))")
-    public Object logServiceAccess(ProceedingJoinPoint pjp) {
-        def start
+    public static Object logServiceAccess(ProceedingJoinPoint pjp) {
+        def start = System.currentTimeMillis()
         try {
-            start = System.currentTimeMillis()
             return pjp.proceed()
         } finally {
             def stop = System.currentTimeMillis()
