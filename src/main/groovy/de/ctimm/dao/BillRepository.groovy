@@ -1,5 +1,6 @@
-package de.ctimm.domain
+package de.ctimm.dao
 
+import de.ctimm.domain.Bill
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 import org.springframework.scheduling.annotation.Scheduled
@@ -18,7 +19,7 @@ class BillRepository {
         if (bill == null) {
             return null
         } else {
-            if (isExpired(bill)){
+            if (isExpired(bill)) {
                 return null
             }
         }
@@ -29,7 +30,7 @@ class BillRepository {
         billRepository.put(bill.account, bill)
     }
 
-    boolean isExpired(Bill bill){
+    boolean isExpired(Bill bill) {
         TimeDuration td = TimeCategory.minus(new Date(), bill.collectionTimestamp)
         if (td.getHours() > 23 || td.getDays() > 0) {
             billRepository.remove(bill.account)
@@ -40,8 +41,8 @@ class BillRepository {
     }
 
     @Scheduled(fixedRate = 500000L)
-    void removeExpired(){
-        billRepository.each{ Integer account, Bill bill ->
+    void removeExpired() {
+        billRepository.each { Integer account, Bill bill ->
             isExpired(bill)
         }
     }

@@ -9,7 +9,7 @@ import java.sql.Timestamp
 class Bill {
     Date collectionTimestamp = new Date()
     Integer account
-    String owner
+    Owner owner
     String number
     Timestamp issued
     String accessKey
@@ -21,6 +21,6 @@ class Bill {
         this.account = account
     }
 
-    protected Bill(){
+    protected Bill() {
     }
 }

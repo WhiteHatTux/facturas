@@ -1,5 +1,6 @@
 package de.ctimm.domain
 
+import de.ctimm.dao.BillRepository
 import groovy.time.Duration
 import groovy.time.TimeCategory
 

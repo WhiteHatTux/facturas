@@ -1,5 +1,7 @@
 package de.ctimm.service
 
+import de.ctimm.domain.Owner
+
 import java.sql.Timestamp
 
 /**
@@ -9,7 +11,7 @@ import java.sql.Timestamp
 interface FacturaService {
     Double getTotalAmount(Integer account)
 
-    String getOwner(Integer account)
+    String getOwnerName(Integer account)
 
     Map<String, String> getSummary(Integer account, boolean forceReload)
 
@@ -18,4 +20,6 @@ interface FacturaService {
     Double getDiscounts(Integer account)
 
     Timestamp getIssueDate(Integer account)
+
+    Owner getOwner(Integer account)
 }

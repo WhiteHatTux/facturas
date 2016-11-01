@@ -1,13 +1,13 @@
 package de.ctimm.service
 
+import de.ctimm.dao.BillDao
 import de.ctimm.domain.Bill
+import de.ctimm.domain.Owner
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
 
 import java.sql.Timestamp
 
@@ -22,27 +22,23 @@ class ResponseParser {
 
     private String xmlParameter
 
-    RestOperations restTemplate;
+    private BillDao billDao
 
     @Autowired
-    ResponseParser(RestOperations restTemplate,
-                   @Value('${baseUrl}') String baseUrl,
-                   @Value('${xmlParameter}') String xmlParameter) {
-        assert restTemplate != null
-        this.restTemplate = restTemplate
-        this.baseUrl = baseUrl
-        this.xmlParameter = xmlParameter
+    ResponseParser(BillDao billDao) {
+        this.billDao = billDao
     }
 
     def getXml(Bill bill) {
         def slurper = new XmlSlurper()
-        String xml = restTemplate.getForObject(baseUrl + xmlParameter + bill.xmlNumber, String.class)
+        String xml = billDao.getBillXml(bill)
         def xmlxml = slurper.parseText(xml)
         assert xmlxml.numeroAutorizacion.text().equals(bill.accessKey)
-        def comprobante = xmlxml.comprobante.text().replace("<![CDATA[", "").replace("]]>", "")
+        String comprobante = xmlxml.comprobante.text().replace("<![CDATA[", "").replace("]]>", "")
         def xmlxmlxml = slurper.parseText(comprobante)
         return xmlxmlxml
     }
+
 
     List<Bill> getBills(String html, Integer account) {
         html = html.replace('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">', '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>')
@@ -54,7 +50,7 @@ class ResponseParser {
 
         Document doc = Jsoup.parse(html)
 
-        String owner = doc.select("body").first()
+        String ownerName = doc.select("body").first()
 
                 .select("article").get(1)
                 .select("tr").first()
@@ -77,9 +73,86 @@ class ResponseParser {
             bill.accessKey = jsoupBill.get(2).text().trim()
             bill.dateOfAuthorization = Timestamp.valueOf(jsoupBill.get(3).text().split("Autoriza")[0].replace("Fecha: ", "").replace("T", " ").replace("-05:00", ""))
             bill.xmlNumber = Integer.valueOf(jsoupBill.get(4).select("font").first().select("a").first().attributes().first().value.split("=")[1])
-            bill.owner = owner
+            bill.owner = new Owner(account)
+            bill.owner.name = ownerName
             billsList.add(bill)
         }
         return billsList
     }
+
+    Owner getOwnerInformation(Integer account) {
+        Owner owner = new Owner(account)
+
+        String html = billDao.getOwnerHtml(account)
+        Document doc = Jsoup.parse(html)
+        String name = doc.select("body").first()
+                .select("form").get(0)
+                .select("table").first()
+                .select("tr").first()
+                .select("td").get(1)
+                .select("input").first()
+                .attr("value")
+        owner.name = name
+        String direction = doc.select("body").first()
+                .select("form").get(0)
+                .select("table").first()
+                .select("tr").get(1)
+                .select("td").get(1)
+                .select("input").first()
+                .attr("value")
+        owner.direction = direction
+        String email = doc.select("body").first()
+                .select("form").get(0)
+                .select("table").first()
+                .select("tr").get(2)
+                .select("td").get(1)
+                .select("input").first()
+                .attr("value")
+        owner.email = email
+        String email1 = doc.select("body").first()
+                .select("form").get(0)
+                .select("table").first()
+                .select("tr").get(3)
+                .select("td").get(1)
+                .select("input").first()
+                .attr("value")
+        if (!email1.isEmpty()) {
+            owner.email1 = email1
+        }
+        String email2 = doc.select("body").first()
+                .select("form").get(0)
+                .select("table").first()
+                .select("tr").get(4)
+                .select("td").get(1)
+                .select("input").first()
+                .attr("value")
+        if (!email2.isEmpty()) {
+            owner.email2 = email2
+        }
+        String cellphone = doc.select("body").first()
+                .select("form").get(0)
+                .select("table").first()
+                .select("tr").get(5)
+                .select("td").get(1)
+                .select("input").first()
+                .attr("value")
+        if (!cellphone.isEmpty()) {
+            owner.cellphone = cellphone
+        }
+        String phone = doc.select("body").first()
+                .select("form").get(0)
+                .select("table").first()
+                .select("tr").get(6)
+                .select("td").get(1)
+                .select("input").first()
+                .attr("value")
+        if (!phone.isEmpty()) {
+            owner.phone = phone
+        }
+        owner
+
+
+    }
+
+
 }

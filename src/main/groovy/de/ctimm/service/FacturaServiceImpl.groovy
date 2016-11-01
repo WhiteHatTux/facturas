@@ -1,15 +1,14 @@
 package de.ctimm.service
 
+import de.ctimm.dao.BillDao
+import de.ctimm.dao.BillRepository
 import de.ctimm.domain.Bill
-import de.ctimm.domain.BillRepository
+import de.ctimm.domain.Owner
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
-import org.springframework.web.client.RestOperations
 
 import java.sql.Timestamp
 
@@ -25,41 +24,36 @@ class FacturaServiceImpl implements FacturaService {
 
     private ResponseParser responseParser
 
-    private RestOperations restTemplate
-
     private BillRepository billRepository
 
+    private BillDao billDao
+
     Bill bill
+
+    Owner owner
 
     boolean forceReload = false
 
     @Autowired
-    FacturaServiceImpl(ResponseParser responseParser, RestOperations restTemplate, BillRepository billRepository) {
+    FacturaServiceImpl(ResponseParser responseParser, BillRepository billRepository, BillDao billDao) {
         this.responseParser = responseParser
-        this.restTemplate = restTemplate
         this.billRepository = billRepository
+        this.billDao = billDao
     }
 
     void getLastComprobante(Integer account) {
         if (billRepository.getBill(account) == null || forceReload) {
-            //account = 194799
-            String url = "http://www1.eeasa.com.ec:8080/FacturaElec/listadoFE.jsp"
-
-            MultiValueMap<String, String> map = new LinkedMultiValueMap<>()
-
-            map.add("cuenta", String.valueOf(account))
-            map.add("submit", "Buscar")
-
-            String html = restTemplate.postForObject(
-                    url,
-                    map,
-                    String.class)
+            String html = billDao.getBillHtml(account)
             List<Bill> bills = responseParser.getBills(html, account)
             Bill bill2 = bills[0]
             bill2.xml = responseParser.getXml(bill2)
             billRepository.addBill(bill2)
         }
         bill = billRepository.getBill(account)
+    }
+
+    Owner getOwner(Integer account) {
+        owner = responseParser.getOwnerInformation(account)
     }
 
     @Override
@@ -69,7 +63,7 @@ class FacturaServiceImpl implements FacturaService {
     }
 
     @Override
-    String getOwner(Integer account) {
+    String getOwnerName(Integer account) {
         getLastComprobante(account)
         bill.xml.infoFactura.razonSocialComprador.text()
     }
@@ -96,7 +90,7 @@ class FacturaServiceImpl implements FacturaService {
     Map<String, String> getSummary(Integer account, boolean forceReload) {
         this.forceReload = forceReload
         logger.debug("Start creating summary for {}", account)
-        Map<String, String> values = new HashMap<>()
+        Map<String, Object> values = new HashMap<>()
         values.put("Owner", getOwner(account))
         values.put("Identification", getIdentification(account))
         values.put("Discounts", String.valueOf(getDiscounts(account)))

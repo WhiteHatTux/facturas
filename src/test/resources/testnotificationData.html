@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Registro</title>
+    <!– [if lt IE 9]>
+    <script src=”http://HTML5shim.googlecode.com/svn/trunk/HTML5.js”>
+    </script>
+    <! [endif] –>
+</head>
+<body>
+<header>
+    <table border="0" cellpadding="5" cellspacing="0">
+        <tr>
+            <td width="170" align="center">
+                <img src="imagenes/logotipo2.jpg" height="100" width="120" alt=""/>
+            </td>
+            <td width="450" align="center">
+                <b><font color="navy" face="arial" size="5">ACTUALICE SUS DATOS</font></b>
+            </td>
+        </tr>
+    </table>
+</header>
+
+<form name="guardar" action="actualizar.jsp" method="post">
+    <table border="0">
+        <tr>
+            <td align="right" width="310">
+                <font color="navy" face="arial" size="4">
+                    <strong>Nombre de Cliente:</strong>
+                </font>
+            </td>
+            <td align="left" width="310">
+                <input type="text" name="nombre" size="50" disabled="disabled" value="LOPEZ ESCOBAR  ROBERTO PABLO ">
+            </td>
+        </tr>
+        <tr>
+            <td align="right" width="310">
+                <font color="navy" face="arial" size="4">
+                    <strong>Dirección:</strong>
+                </font>
+            </td>
+            <td align="left" width="310">
+                <input type="text" name="direccion" size="50" disabled="disabled" value="AVLOS ATISFEBRES CORDERO">
+            </td>
+        </tr>
+        <tr>
+            <td align="right" width="310">
+                <font color="navy" face="arial" size="4">
+                    <strong>Correo Electronico 1:</strong>
+                </font>
+            </td>
+            <td align="left" width="310">
+                <input type="email" name="email1" size="50" disabled="disabled" value="robertopablolopez@yahoo.es">
+            </td>
+        </tr>
+        <tr>
+            <td align="right" width="310">
+                <font color="navy" face="arial" size="4">
+                    <strong>Correo Electronico 2:</strong>
+                </font>
+            </td>
+            <td align="left" width="310">
+                <input type="email" name="email2" size="50" disabled="disabled" value="">
+            </td>
+        </tr>
+        <tr>
+            <td align="right" width="310">
+                <font color="navy" face="arial" size="4">
+                    <strong>Correo Electronico 3:</strong>
+                </font>
+            </td>
+            <td align="left" width="310">
+                <input type="email" name="email3" disabled="disabled" size="50" value="">
+            </td>
+        </tr>
+        <tr>
+            <td align="right" width="310">
+                <font color="navy" face="arial" size="4">
+                    <strong>Teléfono Celular:</strong>
+                </font>
+            </td>
+            <td align="left" width="310">
+                <input type="tel" name="telcel" value="0987614298">
+            </td>
+        </tr>
+        <tr>
+            <td align="right" width="310">
+                <font color="navy" face="arial" size="4">
+                    <strong>Teléfono Convencional:</strong>
+                </font>
+            </td>
+            <td align="left" width="310">
+                <input type="tel" name="telcon" value="2845555">
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+
+            <td align="center" width="620">
+                <font color="navy" face="arial" size="4">
+                    <strong>Registrado en Facturación Electronica</strong>
+                </font>
+            </td>
+
+        </tr>
+    </table>
+    <table border="0">
+        <tr>
+            <td align="center" width="620">
+                <input type="text" name="cuentao" value="194799" style="visibility:hidden">
+                <br>
+                <input type="submit" name="submit" value="Guardar">
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
