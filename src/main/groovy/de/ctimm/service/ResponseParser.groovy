@@ -71,7 +71,12 @@ class ResponseParser {
             String year = date[2].trim()
             bill.issued = Timestamp.valueOf(year + "-" + month + "-" + day + " 00:00:00")
             bill.accessKey = jsoupBill.get(2).text().trim()
-            bill.dateOfAuthorization = Timestamp.valueOf(jsoupBill.get(3).text().split("Autoriza")[0].replace("Fecha: ", "").replace("T", " ").replace("-05:00", ""))
+            String dateOfAuthorization = jsoupBill.get(3).text().split("Autoriza")[0].replace("Fecha: ", "").replace("T", " ").replace("-05:00", "")
+            if (dateOfAuthorization.isEmpty() || dateOfAuthorization.startsWith("null")) {
+                bill.dateOfAuthorization = null
+            } else {
+                bill.dateOfAuthorization = Timestamp.valueOf(dateOfAuthorization)
+            }
             bill.xmlNumber = Integer.valueOf(jsoupBill.get(4).select("font").first().select("a").first().attributes().first().value.split("=")[1])
             bill.owner = new Owner(account)
             bill.owner.name = ownerName
