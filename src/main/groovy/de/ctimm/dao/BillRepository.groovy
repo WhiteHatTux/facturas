@@ -23,6 +23,7 @@ class BillRepository {
             return null
         } else {
             if (isExpired(bill)) {
+                billRepository.remove(bill.account)
                 return null
             }
         }
@@ -33,10 +34,9 @@ class BillRepository {
         billRepository.put(bill.account, bill)
     }
 
-    boolean isExpired(Bill bill) {
+    static boolean isExpired(Bill bill) {
         TimeDuration td = TimeCategory.minus(new Date(), bill.collectionTimestamp)
         if (td.getHours() > 23 || td.getDays() > 0) {
-            billRepository.remove(bill.account)
             return true
         } else {
             return false
@@ -46,10 +46,15 @@ class BillRepository {
     // Run once an hour
     @Scheduled(cron = "0 0 * * * *")
     void removeExpired() {
-        billRepository.each { Integer account, Bill bill ->
+        def billsToDelete = [];
+        billRepository.findAll { Integer account, Bill bill ->
             if (isExpired(bill)){
+                billsToDelete.add(account)
                 logger.info("Bill {} was removed, because it is expired", bill.account)
             }
+        }
+        billsToDelete.findAll{
+            billRepository.remove(it)
         }
     }
 
