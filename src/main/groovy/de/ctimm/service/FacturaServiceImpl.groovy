@@ -52,6 +52,7 @@ class FacturaServiceImpl implements FacturaService {
             Bill bill2 = bills[0]
             bill2.xml = responseParser.getXml(bill2)
             billRepository.addBill(bill2)
+            forceReload = false
         }
         bill = billRepository.getBill(account)
     }

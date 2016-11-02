@@ -24,10 +24,21 @@ class ControllerMonitor {
             return pjp.proceed()
         } finally {
             def stop = System.currentTimeMillis()
+            StringBuilder s = new StringBuilder()
+            .append(pjp.getTarget().getClass().getName())
+            .append(".")
+            .append(((MethodSignature) pjp.getSignature()).getMethod().getName())
+            .append("(")
+            pjp.getArgs().each {
+                if (pjp.getArgs().is(it)) {
+                    s.append(it)
+                } else {
+                    s.append(it).append(",")
+                }
+            }
+            s.append(")")
             logger.info("Execution of {} took {} milliseconds",
-                    pjp.getTarget().getClass().getName()
-                            + "." + ((MethodSignature) pjp.getSignature()).getMethod().getName()
-                            + "." + pjp.getArgs(),
+                    s,
                     stop - start)
         }
     }
