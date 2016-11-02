@@ -1,6 +1,7 @@
-package de.ctimm.domain
+package de.ctimm.dao
 
 import de.ctimm.dao.BillRepository
+import de.ctimm.domain.Bill
 import groovy.time.Duration
 import groovy.time.TimeCategory
 
@@ -33,6 +34,9 @@ class BillRepositoryTest extends GroovyTestCase {
         Bill bill = new Bill(194799)
         bill.collectionTimestamp = TimeCategory.minus(bill.collectionTimestamp, new Duration(1, 0, 0, 0, 0))
         billRepository.addBill(bill)
+        Bill bill2 = new Bill(194778)
+        bill2.collectionTimestamp = TimeCategory.minus(bill2.collectionTimestamp, new Duration(1, 0, 0, 0, 0))
+        billRepository.addBill(bill2)
         billRepository.removeExpired()
         assertEquals(Collections.emptyMap(), billRepository.billRepository)
     }
