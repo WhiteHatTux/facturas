@@ -30,7 +30,7 @@ class ControllerMonitor {
             .append(((MethodSignature) pjp.getSignature()).getMethod().getName())
             .append("(")
             pjp.getArgs().each {
-                if (pjp.getArgs().is(it)) {
+                if (pjp.getArgs().last().is(it)) {
                     s.append(it)
                 } else {
                     s.append(it).append(",")

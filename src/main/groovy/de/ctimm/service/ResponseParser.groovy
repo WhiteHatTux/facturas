@@ -33,6 +33,9 @@ class ResponseParser {
         def slurper = new XmlSlurper()
         String xml = billDao.getBillXml(bill)
         def xmlxml = slurper.parseText(xml)
+        if (xmlxml.numeroAutorizacion.text().isEmpty()){
+            throw new RuntimeException("No ruc processing available")
+        }
         assert xmlxml.numeroAutorizacion.text().equals(bill.accessKey)
         String comprobante = xmlxml.comprobante.text().replace("<![CDATA[", "").replace("]]>", "")
         def xmlxmlxml = slurper.parseText(comprobante)
