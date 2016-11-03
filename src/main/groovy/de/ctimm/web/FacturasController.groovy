@@ -1,5 +1,6 @@
 package de.ctimm.web
 
+import de.ctimm.domain.Owner
 import de.ctimm.service.FacturaService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -39,12 +40,12 @@ class FacturasController {
     }
 
     @RequestMapping(value = "/{account}/owner", method = RequestMethod.GET)
-    ResponseEntity<String> getOwner(
+    ResponseEntity<Owner> getOwner(
             @PathVariable Integer account
     ) {
         logger.info("Start creating Owner for {}", account)
-        String owner = facturaService.getOwnerName(account);
-        return new ResponseEntity<String>(owner, HttpStatus.OK)
+        Owner owner = facturaService.getOwner(account);
+        return new ResponseEntity<Owner>(owner, HttpStatus.OK)
     }
 
     @RequestMapping(value = "/{account}", method = RequestMethod.GET)
