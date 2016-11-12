@@ -33,7 +33,7 @@ class ResponseParser {
         def slurper = new XmlSlurper()
         String xml = billDao.getBillXml(bill)
         def xmlxml = slurper.parseText(xml)
-        if (xmlxml.numeroAutorizacion.text().isEmpty()){
+        if (xmlxml.numeroAutorizacion.text().isEmpty()) {
             throw new RuntimeException("No ruc processing available")
         }
         assert xmlxml.numeroAutorizacion.text().equals(bill.accessKey)
@@ -68,21 +68,24 @@ class ResponseParser {
             Bill bill = new Bill(account)
             Elements jsoupBill = jsoupBills.get(i).select("td")
             bill.number = jsoupBill.get(0).text().replace("FACTURA", "").trim()
+
             String[] date = jsoupBill.get(1).text().replace("Emitido: ", "").replaceAll("Mes consumo.*", "").split("-")
             String day = date[0].trim()
             String month = date[1].trim()
             String year = date[2].trim()
             bill.issued = Timestamp.valueOf(year + "-" + month + "-" + day + " 00:00:00")
+
             bill.accessKey = jsoupBill.get(2).text().trim()
+
             String dateOfAuthorization = jsoupBill.get(3).text().split("Autoriza")[0].replace("Fecha: ", "").replace("T", " ").replace("-05:00", "")
             if (dateOfAuthorization.isEmpty() || dateOfAuthorization.startsWith("null")) {
                 bill.dateOfAuthorization = null
             } else {
                 bill.dateOfAuthorization = Timestamp.valueOf(dateOfAuthorization)
             }
+
             bill.xmlNumber = Integer.valueOf(jsoupBill.get(4).select("font").first().select("a").first().attributes().first().value.split("=")[1])
-            bill.owner = new Owner(account)
-            bill.owner.name = ownerName
+
             billsList.add(bill)
         }
         return billsList

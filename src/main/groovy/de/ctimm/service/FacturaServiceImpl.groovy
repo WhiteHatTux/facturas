@@ -1,8 +1,6 @@
 package de.ctimm.service
 
 import de.ctimm.dao.BillDao
-import de.ctimm.dao.BillRepository
-import de.ctimm.dao.OwnerRepository
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import groovyx.gpars.GParsPool
@@ -19,98 +17,95 @@ import java.sql.Timestamp
  *
  */
 @Component
-@Scope("prototype")
+@Scope
 class FacturaServiceImpl implements FacturaService {
 
     private static final Logger logger = LoggerFactory.getLogger(FacturaServiceImpl.class);
 
     private ResponseParser responseParser
 
-    private BillRepository billRepository
-
-    private OwnerRepository ownerRepository
+    private OwnerService ownerService
 
     private BillDao billDao
 
-    Bill bill
-
-    Owner owner
-
-    boolean forceReloadCompro = false
     boolean forceReloadOwner = false
 
     @Autowired
-    FacturaServiceImpl(ResponseParser responseParser, BillRepository billRepository, BillDao billDao, OwnerRepository ownerRepository) {
+    FacturaServiceImpl(ResponseParser responseParser, BillDao billDao, OwnerService ownerService) {
         this.responseParser = responseParser
-        this.billRepository = billRepository
         this.billDao = billDao
-        this.ownerRepository = ownerRepository
+        this.ownerService = ownerService
     }
 
-    synchronized void getLastComprobante(Integer account) {
-        if (billRepository.getBill(account) == null || forceReloadCompro) {
-            logger.debug("getlastComprobante")
-            String html = billDao.getBillHtml(account)
-            List<Bill> bills = responseParser.getBills(html, account)
-            Bill bill2 = bills[0]
-            bill2.xml = responseParser.getXml(bill2)
-            billRepository.addBill(bill2)
-            forceReloadCompro = false
+    Bill getLastBill(Integer account) {
+        logger.debug("getlastBill")
+        return getBill(account, 0);
+    }
+
+    synchronized Bill getBill(Integer account, int sort) {
+        logger.debug("getbill {}", sort)
+        getOwner(account)
+        Owner owner = ownerService.getOwner(account)
+        ArrayList<Bill> bills = owner.billsList.sort { it.issued }
+        def length = bills.size()
+        Bill bill = bills.get(length - sort - 1)
+        if (bill.xml == null) {
+            bill.xml = responseParser.getXml(bill)
+            owner.addBill(bill)
         }
-        bill = billRepository.getBill(account)
+        return bill
     }
 
     synchronized Owner getOwner(Integer account) {
         logger.debug("getOwner")
-        if (ownerRepository.getOwner(account) == null || forceReloadOwner) {
-            owner = responseParser.getOwnerInformation(account)
-            ownerRepository.addOwner(owner)
+        if (forceReloadOwner) {
+            ownerService.updateOwner(account)
             forceReloadOwner = false
         }
-        owner = ownerRepository.getOwner(account)
+        return ownerService.getOwner(account)
     }
 
     @Override
     Double getTotalAmount(Integer account) {
         logger.debug("getTotal")
-        getLastComprobante(account)
+        def bill = getLastBill(account)
         Double.valueOf(bill.xml.infoFactura.importeTotal.text())
     }
 
     @Override
     String getOwnerName(Integer account) {
         logger.debug("getOwnerName")
-        getLastComprobante(account)
+        def bill = getLastBill(account)
         bill.xml.infoFactura.razonSocialComprador.text()
     }
 
     @Override
     String getIdentification(Integer account) {
         logger.debug("getid")
-        getLastComprobante(account)
+        def bill = getLastBill(account)
         bill.xml.infoFactura.identificacionComprador.text()
     }
 
     @Override
     Double getDiscounts(Integer account) {
         logger.debug("getDiscount")
-        getLastComprobante(account)
+        def bill = getLastBill(account)
         Double.valueOf(bill.xml.infoFactura.totalDescuento.text())
     }
 
     @Override
     Timestamp getIssueDate(Integer account) {
         logger.debug("getIssue")
-        getLastComprobante(account)
+        def bill = getLastBill(account)
         bill.issued
     }
 
     @Override
     Map<String, Object> getSummary(Integer account, boolean forceReload) {
-        this.forceReloadCompro = forceReload
         this.forceReloadOwner = forceReload
         logger.debug("Start creating summary for {}", account)
         Map<String, Object> values = new HashMap<>()
+        // This is supposed to make the different requests asynchronuos and quicker, but who knows
         GParsPool.withPool {
             GParsPool.executeAsync(
                     { values.put("Owner", getOwner(account)) },
