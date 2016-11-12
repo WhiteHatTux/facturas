@@ -25,13 +25,14 @@ class FacturaServiceImplTest extends GroovyTestCase {
     TestDataCreator testDataCreator = new TestDataCreator()
     String testResponse = testDataCreator.testResponse
     String testBill = testDataCreator.testBill
+    String testBill1 = testDataCreator.testBill1
     String testNotificationData = testDataCreator.testNotificationData
-
 
     @Before
     void setUp() {
         billDao = mock(BillDao.class)
-        when(billDao.getBillXml(any(Bill.class))).thenReturn(testBill)
+        when(billDao.getBillXml(eq(6069973))).thenReturn(testBill)
+        when(billDao.getBillXml(eq(5810666))).thenReturn(testBill1)
         when(billDao.getBillHtml(anyInt())).thenReturn(testResponse)
         when(billDao.getOwnerHtml(anyInt())).thenReturn(testNotificationData)
 
@@ -43,20 +44,20 @@ class FacturaServiceImplTest extends GroovyTestCase {
     }
 
     void testGetTotalAmount() {
-        Double actualResult = facturaService.getTotalAmount(testAccount)
+        Double actualResult = facturaService.getTotalAmount(testAccount, 0)
         Double expectedResult = 27.51
         assertEquals(expectedResult, actualResult)
     }
 
     void testGetOwnerName() {
-        String actualResult = facturaService.getOwnerName(testAccount)
+        String actualResult = facturaService.getOwnerName(testAccount, 0)
         String expectedResult = 'LOPEZ ESCOBAR ROBERTO PABLO '
 
         assertEquals(expectedResult, actualResult)
     }
 
     void testGetIdentification() {
-        String actualResult = facturaService.getIdentification(testAccount)
+        String actualResult = facturaService.getIdentification(testAccount, 0)
         String expectedReult = '0200989077'
 
         assertEquals(expectedReult, actualResult)
@@ -97,5 +98,25 @@ class FacturaServiceImplTest extends GroovyTestCase {
         assertEquals(expectedResult, actualResult2)
 
         verify(billDao, times(2)).getBillHtml(eq(194799))
+    }
+
+    void testGetSummaryForOldBill() {
+        Owner expectedResultOwner = testDataCreator.createTestOwner()
+        Map<String, Object> expectedResult = new HashMap<>()
+        expectedResult.put("Total", "16.64")
+        expectedResult.put("Identification", "0200989077")
+        expectedResult.put("Discounts", "0.0")
+        expectedResult.put("Owner", expectedResultOwner)
+        expectedResult.put("Issued", "2016-09-18 00:00:00.0")
+
+        def actualResult = facturaService.getSummaryForBill(testAccount, 1)
+        compareOwners(expectedResultOwner, (Owner) actualResult.get("Owner"))
+        assertEquals(expectedResult, actualResult)
+
+        def actualResult2 = facturaService.getSummaryForBill(testAccount, 1)
+        compareOwners(expectedResultOwner, (Owner) actualResult2.get("Owner"))
+        assertEquals(expectedResult, actualResult2)
+
+        verify(billDao, times(1)).getBillHtml(eq(194799))
     }
 }

@@ -53,8 +53,19 @@ class FacturasController {
             @PathVariable Integer account
     ) {
         logger.info("Start creating summary for {}", account)
-        Map<String, String> values = facturaService.getSummary(account, false)
+        Map<String, Object> values = facturaService.getSummary(account, false)
         logger.info("Finished summary creation for {}", account)
+        return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
+    }
+
+    @RequestMapping(value = "/{account}/{age}", method = RequestMethod.GET)
+    ResponseEntity<Map<String, Object>> getSummaryForBill(
+            @PathVariable Integer account,
+            @PathVariable Integer age
+    ) {
+        logger.info("Start creating summary for {} and age {}", account, age)
+        Map<String, Object> values = facturaService.getSummaryForBill(account, age)
+        logger.info("Finished summary creation for {} and age {}", account, age)
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
 
@@ -63,7 +74,7 @@ class FacturasController {
             @PathVariable Integer account
     ) {
         logger.info("Start creating summary for {}", account)
-        Map<String, String> values = facturaService.getSummary(account, true)
+        Map<String, Object> values = facturaService.getSummary(account, true)
         logger.info("Finished summary creation for {}", account)
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }

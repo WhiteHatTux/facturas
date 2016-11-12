@@ -9,7 +9,7 @@ import de.ctimm.domain.Bill
 interface BillDao {
     String getBillHtml(int account)
 
-    String getBillXml(Bill bill)
+    String getBillXml(Integer xmlNumber)
 
     String getOwnerHtml(int account)
 }
