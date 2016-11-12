@@ -31,19 +31,21 @@ class ResponseParser {
 
     def getXml(Bill bill) {
         def slurper = new XmlSlurper()
-        String xml = billDao.getBillXml(bill)
+        String xml = billDao.getBillXml(bill.xmlNumber)
+        if (xml.isEmpty()){
+            throw new RuntimeException("\nNo data provided by sourceserver")
+        }
         def xmlxml = slurper.parseText(xml)
         if (xmlxml.numeroAutorizacion.text().isEmpty()) {
             throw new RuntimeException("No ruc processing available")
         }
-        assert xmlxml.numeroAutorizacion.text().equals(bill.accessKey)
         String comprobante = xmlxml.comprobante.text().replace("<![CDATA[", "").replace("]]>", "")
         def xmlxmlxml = slurper.parseText(comprobante)
         return xmlxmlxml
     }
 
 
-    List<Bill> getBills(String html, Integer account) {
+    static List<Bill> getBills(String html, Integer account) {
         html = html.replace('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">', '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>')
         html = html.replace("Font", "font")
         html = html.replace("<br>", "")
@@ -52,13 +54,6 @@ class ResponseParser {
         List<Bill> billsList = new ArrayList<Bill>()
 
         Document doc = Jsoup.parse(html)
-
-        String ownerName = doc.select("body").first()
-
-                .select("article").get(1)
-                .select("tr").first()
-                .select("td").first()
-                .select("font").first().text()
 
         Elements jsoupBills = doc.select("body").first()
                 .select("article").get(2)

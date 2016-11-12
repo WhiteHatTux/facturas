@@ -9,6 +9,7 @@ import de.ctimm.domain.Owner
 class TestDataCreator {
     final String testResponse = this.getClass().getResource("/testResponse.html").text
     final String testBill = this.getClass().getResource("/testBill.xml").text
+    final String testBill1 = this.getClass().getResource("/testBill1.xml").text
     final String testComprobante = this.getClass().getResource("/testComprobante.xml").text
     final String testNotificationData = this.getClass().getResource("/testnotificationData.html").text
 
