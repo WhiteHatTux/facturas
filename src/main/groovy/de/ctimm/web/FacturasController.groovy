@@ -2,10 +2,14 @@ package de.ctimm.web
 
 import de.ctimm.domain.Owner
 import de.ctimm.service.FacturaService
+import io.swagger.annotations.Api
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,7 +21,11 @@ import org.springframework.web.bind.annotation.RequestMethod
  *
  */
 @Controller
-@RequestMapping
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "/",
+        description = "Allows consulting invoice data for electricity in Ambato, Ecuaodor",
+        produces = MediaType.APPLICATION_JSON_VALUE
+)
 class FacturasController {
 
     private static final Logger logger = LoggerFactory.getLogger(FacturasController.class)
@@ -48,6 +56,10 @@ class FacturasController {
         return new ResponseEntity<Owner>(owner, HttpStatus.OK)
     }
 
+    @ApiOperation(
+            value = "Get a basic summary of the requested account and the last bill",
+            responseContainer = 'Map<String,Object>'
+    )
     @RequestMapping(value = "/v1/{account}", method = RequestMethod.GET)
     ResponseEntity<Map<String, Object>> getSummary(
             @PathVariable Integer account
@@ -60,15 +72,25 @@ class FacturasController {
 
     @RequestMapping(value = "/v1/{account}/{age}", method = RequestMethod.GET)
     ResponseEntity<Map<String, Object>> getSummaryForBill(
-            @PathVariable Integer account,
-            @PathVariable Integer age
+            @ApiParam(value = "AcountNumber as seen on the box in front of the house", required = true) @PathVariable Integer account,
+            @ApiParam(value = "0 represents the current invoice, higher values represent older invoices", required = true, defaultValue = "0") @PathVariable Integer age
     ) {
         logger.info("Start creating summary for {} and age {}", account, age)
-        Map<String, Object> values = facturaService.getSummaryForBill(account, age)
+        Map<String, Object> values = new HashMap<>()
+        try {
+            values = facturaService.getSummaryForBill(account, age)
+        } catch (RuntimeException re) {
+            values.put("ErrorMessage", "Malformed request could not be processed " + re.getMessage())
+            return new ResponseEntity<Map<String, Object>>(values, HttpStatus.BAD_REQUEST)
+        }
         logger.info("Finished summary creation for {} and age {}", account, age)
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
 
+    @ApiOperation(
+            value = "Get a basic summary of the requested account and the last bill and update data, that can get old",
+            responseContainer = 'Map<String,Object>'
+    )
     @RequestMapping(value = "/v1/force/{account}", method = RequestMethod.GET)
     ResponseEntity<Map<String, Object>> getSummaryForceReload(
             @PathVariable Integer account
@@ -78,4 +100,5 @@ class FacturasController {
         logger.info("Finished summary creation for {}", account)
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
+
 }

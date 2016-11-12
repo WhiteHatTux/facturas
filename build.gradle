@@ -34,6 +34,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-aop')
     compile('org.codehaus.groovy:groovy-all')
     compile('org.jsoup:jsoup:1.10.1')
+    compile('io.springfox:springfox-swagger-ui:2.6.1')
+    compile('io.springfox:springfox-swagger2:2.6.1')
     testCompile('org.mockito:mockito-core:1.10.19')
     testCompile('xmlunit:xmlunit:1.6')
     testCompile('org.springframework.boot:spring-boot-starter-test')
