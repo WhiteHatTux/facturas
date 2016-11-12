@@ -3,7 +3,6 @@ package de.ctimm.service
 import de.ctimm.dao.BillDao
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
-import groovyx.gpars.GParsPool
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,7 +41,7 @@ class FacturaServiceImpl implements FacturaService {
         return getBill(account, 0);
     }
 
-    synchronized Bill getBill(Integer account, int sort) {
+    Bill getBill(Integer account, int sort) {
         logger.debug("getbill {}", sort)
         getOwner(account)
         Owner owner = ownerService.getOwner(account)
@@ -56,7 +55,7 @@ class FacturaServiceImpl implements FacturaService {
         return bill
     }
 
-    synchronized Owner getOwner(Integer account) {
+    Owner getOwner(Integer account) {
         logger.debug("getOwner")
         if (forceReloadOwner) {
             ownerService.updateOwner(account)
@@ -105,17 +104,11 @@ class FacturaServiceImpl implements FacturaService {
         this.forceReloadOwner = forceReload
         logger.debug("Start creating summary for {}", account)
         Map<String, Object> values = new HashMap<>()
-        // This is supposed to make the different requests asynchronuos and quicker, but who knows
-        GParsPool.withPool {
-            GParsPool.executeAsync(
-                    { values.put("Owner", getOwner(account)) },
-                    { values.put("Identification", getIdentification(account)) },
-                    { values.put("Discounts", String.valueOf(getDiscounts(account))) },
-                    { values.put("Total", String.valueOf(getTotalAmount(account))) },
-                    { values.put("Issued", getIssueDate(account).toString()) },
-            )
-        }
-
+        values.put("Owner", getOwner(account))
+        values.put("Identification", getIdentification(account))
+        values.put("Discounts", String.valueOf(getDiscounts(account)))
+        values.put("Total", String.valueOf(getTotalAmount(account)))
+        values.put("Issued", getIssueDate(account).toString())
         logger.debug("Finished summary creation for {}", account)
         return values
     }
