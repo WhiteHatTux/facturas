@@ -9,6 +9,7 @@ import org.jsoup.select.Elements
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import javax.xml.ws.http.HTTPException
 import java.sql.Timestamp
 
 /**
@@ -33,7 +34,7 @@ class ResponseParser {
         def slurper = new XmlSlurper()
         String xml = billDao.getBillXml(bill.xmlNumber)
         if (xml.isEmpty()){
-            throw new RuntimeException("\nNo data provided by sourceserver")
+            throw new RuntimeException("No xml data provided by sourceserver for bill identifier " + bill.xmlNumber + " from " + bill.issued)
         }
         def xmlxml = slurper.parseText(xml)
         if (xmlxml.numeroAutorizacion.text().isEmpty()) {
