@@ -24,10 +24,12 @@ class ResponseParserTest extends GroovyTestCase {
     BillDao billDao = mock(BillDao.class)
     ResponseParser responseParser
 
-    String testBill = this.getClass().getResource("/testBill.xml").text
-    String testResponseHtml = this.getClass().getResource("/testResponse.html").text
-    String testComprobante = this.getClass().getResource("/testComprobante.xml").text
-    String testNotificationData = this.getClass().getResource("/testnotificationData.html").text
+
+    TestDataCreator testDataCreator = new TestDataCreator()
+    String testResponseHtml = testDataCreator.testResponse
+    String testBill = testDataCreator.testBill
+    String testComprobante = testDataCreator.testComprobante
+    String testNotificationData = testDataCreator.testNotificationData
 
     @Before
     void setUp() {

@@ -25,10 +25,10 @@ class ControllerMonitor {
         } finally {
             def stop = System.currentTimeMillis()
             StringBuilder s = new StringBuilder()
-            .append(pjp.getTarget().getClass().getName())
-            .append(".")
-            .append(((MethodSignature) pjp.getSignature()).getMethod().getName())
-            .append("(")
+                    .append(pjp.getTarget().getClass().getName())
+                    .append(".")
+                    .append(((MethodSignature) pjp.getSignature()).getMethod().getName())
+                    .append("(")
             pjp.getArgs().each {
                 if (pjp.getArgs().last().is(it)) {
                     s.append(it)

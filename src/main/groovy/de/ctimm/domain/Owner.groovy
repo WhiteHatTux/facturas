@@ -17,6 +17,24 @@ class Owner {
     String cellphone
     String phone
     String direction
+    Date billUpdateTimeStamp
+    @JsonIgnore
+    List<Bill> billsList = new ArrayList<>()
+
+    void addBill(Bill bill) {
+        if (getBill(bill.number) != null) {
+            billsList.remove(bill)
+        }
+        billsList.add(bill)
+    }
+
+    void addBills(List<Bill> bills) {
+        billsList.addAll(bills)
+    }
+
+    Bill getBill(String billNumber) {
+        billsList.find { (it.number == billNumber) }
+    }
 
     boolean equals(o) {
         if (this.is(o)) return true

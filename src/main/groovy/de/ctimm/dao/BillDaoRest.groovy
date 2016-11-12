@@ -12,13 +12,13 @@ import org.springframework.web.client.RestOperations
  *
  */
 @Component
-class BillDaoImpl implements BillDao {
+class BillDaoRest implements BillDao {
 
     private RestOperations restTemplate
     private String baseUrl
     private String xmlParameter
 
-    BillDaoImpl(RestOperations restTemplate,
+    BillDaoRest(RestOperations restTemplate,
                 @Value('${baseUrl}') String baseUrl,
                 @Value('${xmlParameter}') String xmlParameter) {
         assert restTemplate != null
