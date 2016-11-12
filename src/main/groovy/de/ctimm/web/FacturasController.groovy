@@ -80,6 +80,7 @@ class FacturasController {
         try {
             values = facturaService.getSummaryForBill(account, age)
         } catch (RuntimeException re) {
+            // TODO blacklist requestParams, that don't work for a certain time
             values.put("ErrorMessage", "Malformed request could not be processed " + re.getMessage())
             return new ResponseEntity<Map<String, Object>>(values, HttpStatus.BAD_REQUEST)
         }
