@@ -29,17 +29,17 @@ class FacturasController {
         this.facturaService = facturaService
     }
 
-    @RequestMapping(value = "/{account}/total", method = RequestMethod.GET)
+    @RequestMapping(value = "/v1/{account}/total", method = RequestMethod.GET)
     ResponseEntity<Double> getCurrentCost(
             @PathVariable Integer account
     ) {
 
         logger.info("Start creating currentTotal for {}", account)
-        Double totalAmountThisMonth = facturaService.getTotalAmount(account)
+        Double totalAmountThisMonth = facturaService.getTotalAmount(account, 0)
         return new ResponseEntity<Double>(totalAmountThisMonth, HttpStatus.OK)
     }
 
-    @RequestMapping(value = "/{account}/owner", method = RequestMethod.GET)
+    @RequestMapping(value = "/v1/{account}/owner", method = RequestMethod.GET)
     ResponseEntity<Owner> getOwner(
             @PathVariable Integer account
     ) {
@@ -48,7 +48,7 @@ class FacturasController {
         return new ResponseEntity<Owner>(owner, HttpStatus.OK)
     }
 
-    @RequestMapping(value = "/{account}", method = RequestMethod.GET)
+    @RequestMapping(value = "/v1/{account}", method = RequestMethod.GET)
     ResponseEntity<Map<String, Object>> getSummary(
             @PathVariable Integer account
     ) {
@@ -58,7 +58,7 @@ class FacturasController {
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
 
-    @RequestMapping(value = "/{account}/{age}", method = RequestMethod.GET)
+    @RequestMapping(value = "/v1/{account}/{age}", method = RequestMethod.GET)
     ResponseEntity<Map<String, Object>> getSummaryForBill(
             @PathVariable Integer account,
             @PathVariable Integer age
@@ -69,7 +69,7 @@ class FacturasController {
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
 
-    @RequestMapping(value = "/force/{account}", method = RequestMethod.GET)
+    @RequestMapping(value = "/v1/force/{account}", method = RequestMethod.GET)
     ResponseEntity<Map<String, Object>> getSummaryForceReload(
             @PathVariable Integer account
     ) {
