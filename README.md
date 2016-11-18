@@ -22,4 +22,4 @@ and then
 
 ## Configuration
 
-There is some basic configuration options available in the `src/main/resources/application.properties`, but it will work out of the box creating a h2 database in the users home directory.
+There are some basic configuration options available in the `src/main/resources/application.properties`, but it will work out of the box creating a h2 database in the users home directory.
