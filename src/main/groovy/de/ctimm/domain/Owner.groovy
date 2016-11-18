@@ -26,7 +26,6 @@ class Owner {
     String cellphone
     String phone
     String direction
-    Date billUpdateTimeStamp
     @OneToMany(mappedBy = 'owner')
     @JsonIgnore
     List<Bill> billsList = new ArrayList<>()
