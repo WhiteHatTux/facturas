@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 import java.sql.Timestamp
 
@@ -18,6 +19,7 @@ import java.sql.Timestamp
  */
 @Component
 @Scope
+@Transactional
 class FacturaServiceImpl implements FacturaService {
 
     private static final Logger logger = LoggerFactory.getLogger(FacturaServiceImpl.class);

@@ -12,12 +12,14 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
  *
  */
 @Component
+@Transactional
 class OwnerServiceImpl implements OwnerService {
 
     private ResponseParser responseParser
@@ -81,7 +83,6 @@ class OwnerServiceImpl implements OwnerService {
 
     @Override
     void addOwner(Owner owner) {
-        deleteOwner(owner.account)
         ownerRepository.save(owner)
     }
 

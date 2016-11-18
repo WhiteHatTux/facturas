@@ -3,6 +3,7 @@ package de.ctimm
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestTemplate
 import springfox.documentation.builders.ApiInfoBuilder
@@ -23,6 +24,15 @@ class FacturasApplication {
     @Bean
     public RestTemplate restTEmplate() {
         new RestTemplate()
+    }
+
+
+    @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder()
+    {
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        builder.indentOutput(true);
+        return builder;
     }
 
     @Bean
