@@ -65,9 +65,20 @@ class FacturasController {
             @PathVariable Integer account
     ) {
         logger.info("Start creating summary for {}", account)
-        Map<String, Object> values = facturaService.getSummary(account, false)
+        Map<String, Object> values = new HashMap<>()
+        try {
+            values = facturaService.getSummary(account, false)
+        } catch (RuntimeException re) {
+            return processRuntimeException(values, re)
+        }
         logger.info("Finished summary creation for {}", account)
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
+    }
+
+    private ResponseEntity<Map<String, Object>> processRuntimeException(HashMap<String, Object> values, RuntimeException re) {
+        // TODO blacklist requestParams, that don't work for a certain time
+        values.put("ErrorMessage", "Malformed request could not be processed " + re.getMessage())
+        return new ResponseEntity<Map<String, Object>>(values, HttpStatus.BAD_REQUEST)
     }
 
     @RequestMapping(value = "/v1/{account}/{age}", method = RequestMethod.GET)
@@ -80,9 +91,7 @@ class FacturasController {
         try {
             values = facturaService.getSummaryForBill(account, age)
         } catch (RuntimeException re) {
-            // TODO blacklist requestParams, that don't work for a certain time
-            values.put("ErrorMessage", "Malformed request could not be processed " + re.getMessage())
-            return new ResponseEntity<Map<String, Object>>(values, HttpStatus.BAD_REQUEST)
+            return processRuntimeException(values, re)
         }
         logger.info("Finished summary creation for {} and age {}", account, age)
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
@@ -96,9 +105,14 @@ class FacturasController {
     ResponseEntity<Map<String, Object>> getSummaryForceReload(
             @PathVariable Integer account
     ) {
-        logger.info("Start creating summary for {}", account)
-        Map<String, Object> values = facturaService.getSummary(account, true)
-        logger.info("Finished summary creation for {}", account)
+        logger.info("Start creating force summary for {}", account)
+        Map<String, Object> values = new HashMap<>()
+        try {
+            values = facturaService.getSummary(account, true)
+        } catch (RuntimeException re) {
+            return processRuntimeException(values, re)
+        }
+        logger.info("Finished force summary creation for {}", account)
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
 
