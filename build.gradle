@@ -20,8 +20,6 @@ jar {
     baseName = 'facturas'
     version = '0.0.1-SNAPSHOT'
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
     mavenLocal()
@@ -32,6 +30,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework:spring-web:4.3.3.RELEASE')
     compile('org.springframework.boot:spring-boot-starter-aop')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('com.h2database:h2:1.4.192')
     compile('org.codehaus.groovy:groovy-all')
     compile('org.jsoup:jsoup:1.10.1')
     compile('io.springfox:springfox-swagger-ui:2.6.1')

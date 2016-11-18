@@ -1,6 +1,9 @@
 package de.ctimm
 
+import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
+
+import java.sql.Timestamp
 
 /**
  * @author Christopher Timm <christopher.timm@endicon.de>
@@ -23,6 +26,16 @@ class TestDataCreator {
         expectedResultOwner.phone = '2845555'
         expectedResultOwner.direction = 'AVLOS ATISFEBRES CORDERO'
         expectedResultOwner.email = 'robertopablolopez@yahoo.es'
+
+        Bill bill = new Bill(194799)
+        bill.xmlNumber = 6069973
+        bill.issued = Timestamp.valueOf("2016-10-18 00:00:00.000")
+
+        Bill bill2 = new Bill(194799)
+        bill2.xmlNumber = 5810666
+        bill2.issued = Timestamp.valueOf("2016-09-18 00:00:00.000")
+        expectedResultOwner.addBill(bill)
+        expectedResultOwner.addBill(bill2)
         expectedResultOwner
     }
 

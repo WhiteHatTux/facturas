@@ -2,17 +2,16 @@ package de.ctimm.service
 
 import de.ctimm.TestDataCreator
 import de.ctimm.dao.BillDao
-import de.ctimm.dao.OwnerRepository
-import de.ctimm.domain.Bill
+import de.ctimm.dao.BillJPARepository
+import de.ctimm.dao.OwnerJPARepository
 import de.ctimm.domain.Owner
 import groovy.time.Duration
 import groovy.time.TimeCategory
 import org.junit.Before
+import org.mockito.ArgumentCaptor
 
-import static org.mockito.Matchers.any
 import static org.mockito.Matchers.anyInt
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.when
+import static org.mockito.Mockito.*
 
 /**
  * @author Christopher Timm <christopher.timm@endicon.de>
@@ -22,7 +21,10 @@ class OwnerServiceImplTest extends GroovyTestCase {
 
     OwnerService ownerService
     BillDao billDao
-    OwnerRepository ownerRepository
+    OwnerJPARepository ownerRepository
+    BillJPARepository billJPARepository
+
+    final ArgumentCaptor<Owner> ownerArgumentCaptor = ArgumentCaptor.forClass(Owner.class)
 
     TestDataCreator testDataCreator = new TestDataCreator()
     String testResponse = testDataCreator.testResponse
@@ -32,21 +34,23 @@ class OwnerServiceImplTest extends GroovyTestCase {
     @Before
     void setUp() {
         billDao = mock(BillDao.class)
-        when(billDao.getBillXml(any(Bill.class))).thenReturn(testBill)
+        when(billDao.getBillXml(anyInt())).thenReturn(testBill)
         when(billDao.getBillHtml(anyInt())).thenReturn(testResponse)
         when(billDao.getOwnerHtml(anyInt())).thenReturn(testNotificationData)
 
         ResponseParser responseParser = new ResponseParser(billDao);
-        ownerRepository = new OwnerRepository();
-        ownerService = new OwnerServiceImpl(responseParser, ownerRepository, billDao)
+        ownerRepository = mock(OwnerJPARepository.class);
+        billJPARepository = mock(BillJPARepository.class)
+        ownerService = new OwnerServiceImpl(responseParser, ownerRepository, billDao, billJPARepository)
+        ownerArgumentCaptor
     }
 
     void testUpdateOwner() {
         Owner owner = new Owner(194799)
         owner.name = "something"
-        ownerRepository.ownerRepository.put(194799, owner)
         ownerService.updateOwner(194799)
-        Owner actualOwner = ownerRepository.ownerRepository.get(194799)
+        verify(ownerRepository).save(ownerArgumentCaptor.capture())
+        Owner actualOwner = ownerArgumentCaptor.getValue()
         assertEquals(22, actualOwner.billsList.size())
         assertEquals("LOPEZ ESCOBAR  ROBERTO PABLO ", actualOwner.name)
     }
@@ -54,8 +58,9 @@ class OwnerServiceImplTest extends GroovyTestCase {
     void testGetOwner() {
         Owner owner = new Owner(194799)
         owner.name = "Payaso"
-        ownerRepository.ownerRepository.put(194799, owner)
+        when(ownerRepository.findByAccount(194799)).thenReturn(owner)
         Owner actualOwner = ownerService.getOwner(194799)
+        verify(billDao, times(0)).getOwnerHtml(anyInt())
         assertEquals(194799, actualOwner.account)
         assertEquals("Payaso", actualOwner.name)
     }
@@ -63,14 +68,27 @@ class OwnerServiceImplTest extends GroovyTestCase {
     void testAddOwner() {
         Owner owner = new Owner(194799)
         ownerService.addOwner(owner)
-        Owner actualOwner = ownerRepository.ownerRepository.get(194799)
+        verify(ownerRepository).save(ownerArgumentCaptor.capture())
+        Owner actualOwner = ownerArgumentCaptor.getValue()
         assertEquals(owner, actualOwner)
     }
 
-    void testDeleteOwner() {
-        ownerRepository.ownerRepository.put(194799, new Owner(194799))
+    void testDeleteOwnerNoExist() {
         ownerService.deleteOwner(194799)
-        assertEquals(0, ownerRepository.ownerRepository.size())
+        // If the owner doesn't exist, deletion is not invoked
+        verify(ownerRepository, times(0)).save(ownerArgumentCaptor.capture())
+
+    }
+
+    void testDeleteOwnerExist() {
+        Owner owner = new Owner(194799)
+        owner.name = "Payaso"
+        when(ownerRepository.findByAccount(194799)).thenReturn(owner)
+        final ArgumentCaptor<Integer> integerArgumentCaptor = ArgumentCaptor.forClass(Integer.class)
+        ownerService.deleteOwner(194799)
+        verify(ownerRepository, times(1)).deleteByAccount(integerArgumentCaptor.capture())
+        Integer actualDeletedOwner = integerArgumentCaptor.getValue()
+        assertEquals(194799, actualDeletedOwner)
     }
 
     void testRemoveExpired() {
@@ -78,7 +96,11 @@ class OwnerServiceImplTest extends GroovyTestCase {
         def yesterday = TimeCategory.minus(owner.collectionTimestamp, new Duration(1, 0, 0, 0, 0))
         owner.collectionTimestamp = yesterday
         ownerService.addOwner(owner)
+        verify(ownerRepository).save(ownerArgumentCaptor.capture())
+        when(ownerRepository.findAll()).thenReturn(Collections.singletonList(ownerArgumentCaptor.getValue()))
         ownerService.updateExpired()
-        assertNotSame(yesterday, ownerRepository.ownerRepository.get(194799).collectionTimestamp)
+        verify(ownerRepository, times(2)).save(ownerArgumentCaptor.capture())
+        Owner actualOwner = ownerArgumentCaptor.getValue()
+        assertNotSame(yesterday, actualOwner.collectionTimestamp)
     }
 }

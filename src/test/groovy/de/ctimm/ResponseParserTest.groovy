@@ -10,7 +10,6 @@ import org.junit.Before
 
 import java.sql.Timestamp
 
-import static org.mockito.Matchers.any
 import static org.mockito.Matchers.anyInt
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
@@ -33,7 +32,7 @@ class ResponseParserTest extends GroovyTestCase {
 
     @Before
     void setUp() {
-        when(billDao.getBillXml(any(Bill.class))).thenReturn(testBill)
+        when(billDao.getBillXml(anyInt())).thenReturn(testBill)
         when(billDao.getOwnerHtml(anyInt())).thenReturn(testNotificationData)
         responseParser = new ResponseParser(billDao);
     }
