@@ -1,7 +1,8 @@
 package de.ctimm.service
 
 import de.ctimm.dao.BillDao
-import de.ctimm.dao.OwnerRepository
+import de.ctimm.dao.BillJPARepository
+import de.ctimm.dao.OwnerJPARepository
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import groovy.time.TimeCategory
@@ -21,23 +22,25 @@ class OwnerServiceImpl implements OwnerService {
 
     private ResponseParser responseParser
 
-    private OwnerRepository ownerRepository
+    private OwnerJPARepository ownerRepository
+
+    private BillJPARepository billJPARepository
 
     private BillDao billDao
-
 
     private static final Logger logger = LoggerFactory.getLogger(OwnerServiceImpl.class);
 
     @Autowired
-    public OwnerServiceImpl(ResponseParser responseParser, OwnerRepository ownerRepository, BillDao billDao) {
+    public OwnerServiceImpl(ResponseParser responseParser, OwnerJPARepository ownerRepository, BillDao billDao, BillJPARepository billJPARepository) {
         this.responseParser = responseParser
         this.ownerRepository = ownerRepository
         this.billDao = billDao
+        this.billJPARepository = billJPARepository
     }
 
     @Override
     Owner updateOwner(Integer account) {
-        Owner existOwner = ownerRepository.getOwner(account)
+        Owner existOwner = ownerRepository.findByAccount(account)
         Owner owner = responseParser.getOwnerInformation(account)
 
         existOwner = existOwner == null ? new Owner(account) : existOwner
@@ -53,6 +56,7 @@ class OwnerServiceImpl implements OwnerService {
         // Get the updated list of current bills
         String html = billDao.getBillHtml(account)
         List<Bill> bills = responseParser.getBills(html, account)
+        billJPARepository.save(bills)
         bills.each {
             it.owner = existOwner
         }
@@ -61,39 +65,39 @@ class OwnerServiceImpl implements OwnerService {
                 existOwner.addBill(it)
             }
         }
-        addOwner(existOwner)
+        this.addOwner(existOwner)
         return existOwner
     }
 
     @Override
     Owner getOwner(Integer account) {
-        Owner existOwner = ownerRepository.getOwner(account)
+        Owner existOwner = ownerRepository.findByAccount(account)
         if (existOwner == null) {
-            return updateOwner(account)
+            return this.updateOwner(account)
         }
-        updateIfExpired(existOwner)
+        this.updateIfExpired(existOwner)
         return existOwner
     }
 
     @Override
     void addOwner(Owner owner) {
         deleteOwner(owner.account)
-        ownerRepository.addOwner(owner)
+        ownerRepository.save(owner)
     }
 
     @Override
     void deleteOwner(Integer account) {
-        Owner existOwner = ownerRepository.getOwner(account)
+        Owner existOwner = ownerRepository.findByAccount(account)
         if (existOwner != null) {
             logger.info("Will remove owner {} with {} current bills", existOwner.account, existOwner.billsList.size())
-            ownerRepository.removeOwner(account)
+            ownerRepository.deleteByAccount(account)
         }
     }
 
     private Boolean updateIfExpired(Owner owner) {
         TimeDuration td = TimeCategory.minus(new Date(), owner.collectionTimestamp)
         if (td.getHours() > 23 || td.getDays() > 0) {
-            updateOwner(owner.account)
+            this.updateOwner(owner.account)
             logger.info("Owner {} was updated, because it was expired", owner.account)
             return true
         } else {
@@ -104,7 +108,7 @@ class OwnerServiceImpl implements OwnerService {
 
     @Scheduled(fixedRate = 500000L)
     void updateExpired() {
-        ownerRepository.ownerRepository.each { Integer account, Owner owner ->
+        ownerRepository.findAll().each { Owner owner ->
             updateIfExpired(owner)
         }
     }

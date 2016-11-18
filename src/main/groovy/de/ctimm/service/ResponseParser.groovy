@@ -9,7 +9,6 @@ import org.jsoup.select.Elements
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import javax.xml.ws.http.HTTPException
 import java.sql.Timestamp
 
 /**
@@ -18,10 +17,6 @@ import java.sql.Timestamp
  */
 @Component
 class ResponseParser {
-
-    private String baseUrl
-
-    private String xmlParameter
 
     private BillDao billDao
 

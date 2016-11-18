@@ -2,13 +2,15 @@ package de.ctimm.service
 
 import de.ctimm.TestDataCreator
 import de.ctimm.dao.BillDao
-import de.ctimm.dao.OwnerRepository
-import de.ctimm.domain.Bill
+import de.ctimm.dao.BillJPARepository
+import de.ctimm.dao.OwnerJPARepository
 import de.ctimm.domain.Owner
 import org.junit.Before
 
-import static org.mockito.Matchers.*
-import static org.mockito.Mockito.*
+import static org.mockito.Matchers.anyInt
+import static org.mockito.Matchers.eq
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
@@ -18,8 +20,9 @@ class FacturaServiceImplTest extends GroovyTestCase {
     ResponseParser responseParser
     FacturaService facturaService
     OwnerService ownerService
-    OwnerRepository ownerRepository
+    OwnerJPARepository ownerRepository
     BillDao billDao
+    BillJPARepository billJPARepository
     Integer testAccount = 194799
 
     TestDataCreator testDataCreator = new TestDataCreator()
@@ -38,9 +41,11 @@ class FacturaServiceImplTest extends GroovyTestCase {
 
 
         responseParser = new ResponseParser(billDao)
-        ownerRepository = new OwnerRepository()
-        ownerService = new OwnerServiceImpl(responseParser, ownerRepository, billDao)
-        facturaService = new FacturaServiceImpl(responseParser, billDao, ownerService)
+        ownerRepository = mock(OwnerJPARepository.class)
+        billJPARepository = mock(BillJPARepository.class)
+        when(ownerRepository.findByAccount(194799)).thenReturn(testDataCreator.createTestOwner())
+        ownerService = new OwnerServiceImpl(responseParser, ownerRepository, billDao, billJPARepository)
+        facturaService = new FacturaServiceImpl(responseParser, billDao, ownerService, billJPARepository)
     }
 
     void testGetTotalAmount() {
@@ -90,14 +95,6 @@ class FacturaServiceImplTest extends GroovyTestCase {
         def actualResult = facturaService.getSummary(testAccount, false)
         compareOwners(expectedResultOwner, (Owner) actualResult.get("Owner"))
         assertEquals(expectedResult, actualResult)
-
-        verify(billDao, times(1)).getBillHtml(eq(194799))
-
-        def actualResult2 = facturaService.getSummary(testAccount, true)
-        compareOwners(expectedResultOwner, (Owner) actualResult2.get("Owner"))
-        assertEquals(expectedResult, actualResult2)
-
-        verify(billDao, times(2)).getBillHtml(eq(194799))
     }
 
     void testGetSummaryForOldBill() {
@@ -117,6 +114,5 @@ class FacturaServiceImplTest extends GroovyTestCase {
         compareOwners(expectedResultOwner, (Owner) actualResult2.get("Owner"))
         assertEquals(expectedResult, actualResult2)
 
-        verify(billDao, times(1)).getBillHtml(eq(194799))
     }
 }

@@ -2,13 +2,22 @@ package de.ctimm.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
+import javax.persistence.OneToMany
+
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
  *
  */
+@Entity
 class Owner {
     @JsonIgnore
     Date collectionTimestamp = new Date()
+    @Id
+    @GeneratedValue
+    Long id
     Integer account
     String name
     String email
@@ -18,8 +27,12 @@ class Owner {
     String phone
     String direction
     Date billUpdateTimeStamp
+    @OneToMany(mappedBy = 'owner')
     @JsonIgnore
     List<Bill> billsList = new ArrayList<>()
+
+    protected Owner() {
+    }
 
     void addBill(Bill bill) {
         if (getBill(bill.number) != null) {

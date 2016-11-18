@@ -1,6 +1,7 @@
 package de.ctimm.service
 
 import de.ctimm.dao.BillDao
+import de.ctimm.dao.BillJPARepository
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import org.slf4j.Logger
@@ -25,15 +26,18 @@ class FacturaServiceImpl implements FacturaService {
 
     private OwnerService ownerService
 
+    private BillJPARepository billJPARepository
+
     private BillDao billDao
 
     boolean forceReloadOwner = false
 
     @Autowired
-    FacturaServiceImpl(ResponseParser responseParser, BillDao billDao, OwnerService ownerService) {
+    FacturaServiceImpl(ResponseParser responseParser, BillDao billDao, OwnerService ownerService, BillJPARepository billJPARepository) {
         this.responseParser = responseParser
         this.billDao = billDao
         this.ownerService = ownerService
+        this.billJPARepository = billJPARepository
     }
 
     Bill getBill(Integer account, int age) {
@@ -41,10 +45,12 @@ class FacturaServiceImpl implements FacturaService {
         getOwner(account)
         Owner owner = ownerService.getOwner(account)
         ArrayList<Bill> bills = owner.billsList.sort { it.issued }
+        billJPARepository.save(bills)
         def length = bills.size()
         Bill bill = bills.get(length - age - 1)
-        if (bill.xml == null) {
-            bill.xml = responseParser.getXml(bill)
+        if (bill.getXml() == null) {
+            bill.setXml(responseParser.getXml(bill))
+            billJPARepository.save(bill)
             owner.addBill(bill)
         }
         return bill
@@ -63,28 +69,28 @@ class FacturaServiceImpl implements FacturaService {
     Double getTotalAmount(Integer account, int age) {
         logger.debug("getTotal")
         def bill = getBill(account, age)
-        Double.valueOf((String) bill.xml.infoFactura.importeTotal.text())
+        Double.valueOf((String) bill.getXml().infoFactura.importeTotal.text())
     }
 
     @Override
     String getOwnerName(Integer account, int age) {
         logger.debug("getOwnerName")
         def bill = getBill(account, age)
-        bill.xml.infoFactura.razonSocialComprador.text()
+        bill.getXml().infoFactura.razonSocialComprador.text()
     }
 
     @Override
     String getIdentification(Integer account, int age) {
         logger.debug("getid")
         def bill = getBill(account, age)
-        bill.xml.infoFactura.identificacionComprador.text()
+        bill.getXml().infoFactura.identificacionComprador.text()
     }
 
     @Override
     Double getDiscounts(Integer account, int age) {
         logger.debug("getDiscount")
         def bill = getBill(account, age)
-        Double.valueOf((String) bill.xml.infoFactura.totalDescuento.text())
+        Double.valueOf((String) bill.getXml().infoFactura.totalDescuento.text())
     }
 
     @Override
@@ -108,9 +114,9 @@ class FacturaServiceImpl implements FacturaService {
         values.put("Owner", getOwner(account))
 
         Owner owner = getOwner(account);
-        if (age > owner.billsList.size()-1){
+        if (age > owner.billsList.size() - 1) {
             values.put("message", "The requested bill does not exist, Returning the oldest bill")
-            age = owner.billsList.size()-1
+            age = owner.billsList.size() - 1
         }
 
         values.put("Identification", getIdentification(account, age))
