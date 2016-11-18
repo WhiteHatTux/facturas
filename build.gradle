@@ -29,6 +29,15 @@ repositories {
     mavenCentral()
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
+
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework:spring-web:4.3.3.RELEASE')
