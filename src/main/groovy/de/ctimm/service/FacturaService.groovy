@@ -14,11 +14,11 @@ interface FacturaService {
 
     String getIdentification(Integer account, int age)
 
-    Timestamp getIssueDate(Integer account, int age)
+    Date getDateOfAuthorization(Integer account, int age)
+
+    Date getIssueDate(Integer account, int age)
 
     Owner getOwner(Integer account)
-
-    String getOwnerName(Integer account, int age)
 
     Map<String, Object> getSummary(Integer account, boolean forceReload)
 

@@ -9,6 +9,7 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Before
 
 import java.sql.Timestamp
+import java.text.SimpleDateFormat
 
 import static org.mockito.Matchers.anyInt
 import static org.mockito.Mockito.mock
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.when
  */
 class ResponseParserTest extends GroovyTestCase {
 
+    private static final testAccount = TestDataCreator.testAccount
     BillDao billDao = mock(BillDao.class)
     ResponseParser responseParser
 
@@ -38,15 +40,15 @@ class ResponseParserTest extends GroovyTestCase {
     }
 
     void testGetBills() {
-        List<Bill> bills = responseParser.getBills(testResponseHtml, 194799);
+        List<Bill> bills = responseParser.getBills(testResponseHtml, testAccount);
 
         def billToCheck = bills[0]
         assertEquals("001012-4398474", billToCheck.number)
-        assertEquals(Timestamp.valueOf("2016-10-18 00:00:00"), billToCheck.issued)
+        assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-10-18 00:00:00"), billToCheck.issued)
         assertEquals("1810201601189000143900120010120043984740439847414", billToCheck.accessKey)
-        assertEquals(Timestamp.valueOf("2016-10-19 10:47:59"), billToCheck.dateOfAuthorization)
+        assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-10-19 10:47:59"), billToCheck.dateOfAuthorization)
         assertEquals(Integer.valueOf("6069973"), billToCheck.xmlNumber)
-        assertEquals(Integer.valueOf("194799"), billToCheck.account)
+        assertEquals(testAccount, billToCheck.account)
     }
 
     void testGetXml() {
@@ -65,7 +67,6 @@ class ResponseParserTest extends GroovyTestCase {
     }
 
     void testGetOwnerInfo() {
-        Integer testAccount = 194799
         Owner owner = responseParser.getOwnerInformation(testAccount)
 
         assertEquals("robertopablolopez@yahoo.es", owner.email)

@@ -4,8 +4,11 @@ import de.ctimm.TestDataCreator
 import de.ctimm.dao.BillDao
 import de.ctimm.dao.BillJPARepository
 import de.ctimm.dao.OwnerJPARepository
+import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import org.junit.Before
+
+import java.text.SimpleDateFormat
 
 import static org.mockito.Matchers.anyInt
 import static org.mockito.Matchers.eq
@@ -23,9 +26,9 @@ class FacturaServiceImplTest extends GroovyTestCase {
     OwnerJPARepository ownerRepository
     BillDao billDao
     BillJPARepository billJPARepository
-    Integer testAccount = 194799
 
     TestDataCreator testDataCreator = new TestDataCreator()
+    Integer testAccount = testDataCreator.testAccount
     String testResponse = testDataCreator.testResponse
     String testBill = testDataCreator.testBill
     String testBill1 = testDataCreator.testBill1
@@ -43,7 +46,7 @@ class FacturaServiceImplTest extends GroovyTestCase {
         responseParser = new ResponseParser(billDao)
         ownerRepository = mock(OwnerJPARepository.class)
         billJPARepository = mock(BillJPARepository.class)
-        when(ownerRepository.findByAccount(194799)).thenReturn(testDataCreator.createTestOwner())
+        when(ownerRepository.findByAccount(testAccount)).thenReturn(testDataCreator.createTestOwner())
         ownerService = new OwnerServiceImpl(responseParser, ownerRepository, billDao, billJPARepository)
         facturaService = new FacturaServiceImpl(responseParser, billDao, ownerService, billJPARepository)
     }
@@ -51,13 +54,6 @@ class FacturaServiceImplTest extends GroovyTestCase {
     void testGetTotalAmount() {
         Double actualResult = facturaService.getTotalAmount(testAccount, 0)
         Double expectedResult = 27.51
-        assertEquals(expectedResult, actualResult)
-    }
-
-    void testGetOwnerName() {
-        String actualResult = facturaService.getOwnerName(testAccount, 0)
-        String expectedResult = 'LOPEZ ESCOBAR ROBERTO PABLO '
-
         assertEquals(expectedResult, actualResult)
     }
 
@@ -78,41 +74,49 @@ class FacturaServiceImplTest extends GroovyTestCase {
     static void compareOwners(Owner expected, Owner actual) {
         actual.properties.each { def key, def value ->
             if (key != "collectionTimestamp" && key != "billsList") {
-                assertEquals(expected.(key.toString()), value)
+                assertEquals(((String)key + " was different"), expected.(key.toString()), value)
+            }
+        }
+    }
+
+    static void compareBills(Bill expected, Bill actual){
+        actual.properties.each { def key, def value ->
+            if (key != "collectionTimestamp") {
+                assertEquals(((String)key + " was different"), expected.(key.toString()), value)
             }
         }
     }
 
     void testGetSummary() {
         Owner expectedResultOwner = testDataCreator.createTestOwner()
+        Bill expectedBill = testDataCreator.createTestBill(0)
         Map<String, Object> expectedResult = new HashMap<>()
-        expectedResult.put("Total", "27.51")
-        expectedResult.put("Identification", "0200989077")
-        expectedResult.put("Discounts", "0.0")
+        expectedResult.put("account", testAccount)
         expectedResult.put("Owner", expectedResultOwner)
-        expectedResult.put("Issued", "2016-10-18 00:00:00.0")
+        expectedResult.put("bill", expectedBill)
 
         def actualResult = facturaService.getSummary(testAccount, false)
         compareOwners(expectedResultOwner, (Owner) actualResult.get("Owner"))
-        assertEquals(expectedResult, actualResult)
+        compareBills(expectedBill, (Bill) actualResult.get("bill"))
+        expectedResult.each { def key, def value ->
+            assertEquals(value, actualResult.get(key))
+        }
     }
 
     void testGetSummaryForOldBill() {
         Owner expectedResultOwner = testDataCreator.createTestOwner()
+        Bill expectedBill = testDataCreator.createTestBill(1)
         Map<String, Object> expectedResult = new HashMap<>()
-        expectedResult.put("Total", "16.64")
-        expectedResult.put("Identification", "0200989077")
-        expectedResult.put("Discounts", "0.0")
         expectedResult.put("Owner", expectedResultOwner)
-        expectedResult.put("Issued", "2016-09-18 00:00:00.0")
+        expectedResult.put("account", testAccount)
+        expectedResult.put("bill", expectedBill)
+
 
         def actualResult = facturaService.getSummaryForBill(testAccount, 1)
         compareOwners(expectedResultOwner, (Owner) actualResult.get("Owner"))
-        assertEquals(expectedResult, actualResult)
-
-        def actualResult2 = facturaService.getSummaryForBill(testAccount, 1)
-        compareOwners(expectedResultOwner, (Owner) actualResult2.get("Owner"))
-        assertEquals(expectedResult, actualResult2)
-
+        compareBills(expectedBill, (Bill) actualResult.get("bill"))
+        expectedResult.each { def key, def value ->
+            assertEquals(value, actualResult.get(key))
+        }
     }
 }

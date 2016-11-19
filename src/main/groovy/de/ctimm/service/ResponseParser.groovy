@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.sql.Timestamp
+import java.text.SimpleDateFormat
 
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
@@ -64,7 +65,8 @@ class ResponseParser {
             String day = date[0].trim()
             String month = date[1].trim()
             String year = date[2].trim()
-            bill.issued = Timestamp.valueOf(year + "-" + month + "-" + day + " 00:00:00")
+            String dateString = year + "-" + month + "-" + day + " 00:00:00"
+            bill.issued = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateString)
 
             bill.accessKey = jsoupBill.get(2).text().trim()
 
@@ -72,7 +74,7 @@ class ResponseParser {
             if (dateOfAuthorization.isEmpty() || dateOfAuthorization.startsWith("null")) {
                 bill.dateOfAuthorization = null
             } else {
-                bill.dateOfAuthorization = Timestamp.valueOf(dateOfAuthorization)
+                bill.dateOfAuthorization = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateOfAuthorization)
             }
 
             bill.xmlNumber = Integer.valueOf(jsoupBill.get(4).select("font").first().select("a").first().attributes().first().value.split("=")[1])

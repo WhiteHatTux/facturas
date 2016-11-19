@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-import java.sql.Timestamp
+import javax.annotation.PostConstruct
 
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
@@ -42,6 +42,24 @@ class FacturaServiceImpl implements FacturaService {
         this.billJPARepository = billJPARepository
     }
 
+    @PostConstruct
+    private void init(){
+        def billsList = billJPARepository.findAll()
+        billsList.each {
+            ensureBillDataIsfilled(it)
+        }
+    }
+
+    private ensureBillDataIsfilled(Bill bill) {
+        if (bill.getXml() != null) {
+            bill.total = Double.valueOf((String) bill.getXml().infoFactura.importeTotal.text())
+            bill.discounts = Double.valueOf((String) bill.getXml().infoFactura.totalDescuento.text())
+            bill.identification = bill.getXml().infoFactura.identificacionComprador.text()
+            billJPARepository.save(bill)
+            logger.info("Filled missing billData for {}", bill)
+        }
+    }
+
     Bill getBill(Integer account, int age) {
         logger.debug("getBill for account {} and age {}", account, age)
         getOwner(account)
@@ -52,8 +70,16 @@ class FacturaServiceImpl implements FacturaService {
         Bill bill = bills.get(length - age - 1)
         if (bill.getXml() == null) {
             bill.setXml(responseParser.getXml(bill))
+            bill.total = Double.valueOf((String) bill.getXml().infoFactura.importeTotal.text())
+            bill.discounts = Double.valueOf((String) bill.getXml().infoFactura.totalDescuento.text())
+            bill.identification = bill.getXml().infoFactura.identificacionComprador.text()
             billJPARepository.save(bill)
             owner.addBill(bill)
+        } else {
+            if (bill.total == null) {
+                ensureBillDataIsfilled(bill)
+                logger.warn("Billdata was not up-to-date for bill {}", bill)
+            }
         }
         return bill
     }
@@ -71,35 +97,35 @@ class FacturaServiceImpl implements FacturaService {
     Double getTotalAmount(Integer account, int age) {
         logger.debug("getTotal")
         def bill = getBill(account, age)
-        Double.valueOf((String) bill.getXml().infoFactura.importeTotal.text())
-    }
-
-    @Override
-    String getOwnerName(Integer account, int age) {
-        logger.debug("getOwnerName")
-        def bill = getBill(account, age)
-        bill.getXml().infoFactura.razonSocialComprador.text()
+        bill.total
     }
 
     @Override
     String getIdentification(Integer account, int age) {
         logger.debug("getid")
         def bill = getBill(account, age)
-        bill.getXml().infoFactura.identificacionComprador.text()
+        bill.identification
     }
 
     @Override
     Double getDiscounts(Integer account, int age) {
         logger.debug("getDiscount")
         def bill = getBill(account, age)
-        Double.valueOf((String) bill.getXml().infoFactura.totalDescuento.text())
+        bill.discounts
     }
 
     @Override
-    Timestamp getIssueDate(Integer account, int age) {
+    Date getIssueDate(Integer account, int age) {
         logger.debug("getIssue")
         def bill = getBill(account, age)
         bill.issued
+    }
+
+    @Override
+    Date getDateOfAuthorization(Integer account, int age) {
+        logger.debug("getDateOfAuthorization")
+        def bill = getBill(account, age)
+        bill.dateOfAuthorization
     }
 
     @Override
@@ -121,10 +147,8 @@ class FacturaServiceImpl implements FacturaService {
             age = owner.billsList.size() - 1
         }
 
-        values.put("Identification", getIdentification(account, age))
-        values.put("Discounts", String.valueOf(getDiscounts(account, age)))
-        values.put("Total", String.valueOf(getTotalAmount(account, age)))
-        values.put("Issued", getIssueDate(account, age).toString())
+        values.put("account", account)
+        values.put("bill", getBill(account, age))
         logger.debug("Finished summary creation for {}", account)
         return values
     }
