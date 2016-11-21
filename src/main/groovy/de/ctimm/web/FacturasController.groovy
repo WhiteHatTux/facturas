@@ -1,5 +1,6 @@
 package de.ctimm.web
 
+import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import de.ctimm.service.FacturaService
 import io.swagger.annotations.Api
@@ -54,6 +55,15 @@ class FacturasController {
         logger.info("Start creating Owner for {}", account)
         Owner owner = facturaService.getOwner(account);
         return new ResponseEntity<Owner>(owner, HttpStatus.OK)
+    }
+
+    @RequestMapping(value = "/v1/{account}/{age}/bill", method = RequestMethod.GET)
+    ResponseEntity<Bill> getBillForAge(
+            @PathVariable Integer account,
+            @PathVariable Integer age
+    ){
+        Bill bill = facturaService.getBill(account, age)
+        return new ResponseEntity<Bill>(bill, HttpStatus.OK);
     }
 
     @ApiOperation(

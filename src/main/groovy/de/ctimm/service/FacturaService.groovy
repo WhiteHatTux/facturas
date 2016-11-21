@@ -1,14 +1,15 @@
 package de.ctimm.service
 
+import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
-
-import java.sql.Timestamp
 
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
  *
  */
 interface FacturaService {
+
+    Bill getBill(Integer account, int age)
 
     Double getDiscounts(Integer account, int age)
 

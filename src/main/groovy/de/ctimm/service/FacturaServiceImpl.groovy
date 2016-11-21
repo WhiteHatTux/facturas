@@ -60,7 +60,8 @@ class FacturaServiceImpl implements FacturaService {
         }
     }
 
-    Bill getBill(Integer account, int age) {
+    @Override
+    public Bill getBill(Integer account, int age) {
         logger.debug("getBill for account {} and age {}", account, age)
         getOwner(account)
         Owner owner = ownerService.getOwner(account)
