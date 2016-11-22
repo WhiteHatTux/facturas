@@ -15,7 +15,7 @@ import java.sql.Timestamp
 class Bill {
     public static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss"
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     Date collectionTimestamp = new Date()
     @Id
     @GeneratedValue
@@ -25,10 +25,10 @@ class Bill {
     @ManyToOne
     Owner owner
     String number
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     Date issued
     String accessKey
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     Date dateOfAuthorization
     @JsonIgnore
     @Lob
