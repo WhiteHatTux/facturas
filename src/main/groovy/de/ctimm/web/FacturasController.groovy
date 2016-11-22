@@ -3,6 +3,7 @@ package de.ctimm.web
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import de.ctimm.service.FacturaService
+import de.ctimm.service.ResponseParser
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
@@ -56,6 +57,16 @@ class FacturasController {
         Owner owner = facturaService.getOwner(account);
         return new ResponseEntity<Owner>(owner, HttpStatus.OK)
     }
+
+    @RequestMapping(value = "/v1/force/{account}/{age}/bill", method = RequestMethod.GET)
+    ResponseEntity<Bill> getForceBillForAge(
+            @PathVariable Integer account,
+            @PathVariable Integer age
+    ){
+        facturaService.getSummary(account, true);
+        getBillForAge(account, age);
+    }
+
 
     @RequestMapping(value = "/v1/{account}/{age}/bill", method = RequestMethod.GET)
     ResponseEntity<Bill> getBillForAge(

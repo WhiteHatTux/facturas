@@ -34,7 +34,7 @@ class ResponseParser {
         }
         def xmlxml = slurper.parseText(xml)
         if (xmlxml.numeroAutorizacion.text().isEmpty()) {
-            throw new RuntimeException("No ruc processing available")
+            return xmlxml
         }
         String comprobante = xmlxml.comprobante.text().replace("<![CDATA[", "").replace("]]>", "")
         def xmlxmlxml = slurper.parseText(comprobante)
