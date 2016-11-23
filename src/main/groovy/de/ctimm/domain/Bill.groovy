@@ -71,27 +71,23 @@ class Bill {
         if (account != bill.account) return false
         if (dateOfAuthorization != bill.dateOfAuthorization) return false
         if (discounts != bill.discounts) return false
-        if (id != bill.id) return false
         if (identification != bill.identification) return false
         if (issued != bill.issued) return false
         if (number != bill.number) return false
         if (owner != bill.owner) return false
         if (total != bill.total) return false
-        if (xmlNumber != bill.xmlNumber) return false
 
         return true
     }
 
     int hashCode() {
         int result
-        result = (id != null ? id.hashCode() : 0)
         result = 31 * result + (account != null ? account.hashCode() : 0)
         result = 31 * result + (owner != null ? owner.hashCode() : 0)
         result = 31 * result + (number != null ? number.hashCode() : 0)
         result = 31 * result + (issued != null ? issued.hashCode() : 0)
         result = 31 * result + (accessKey != null ? accessKey.hashCode() : 0)
         result = 31 * result + (dateOfAuthorization != null ? dateOfAuthorization.hashCode() : 0)
-        result = 31 * result + (xmlNumber != null ? xmlNumber.hashCode() : 0)
         result = 31 * result + (total != null ? total.hashCode() : 0)
         result = 31 * result + (identification != null ? identification.hashCode() : 0)
         result = 31 * result + (discounts != null ? discounts.hashCode() : 0)
