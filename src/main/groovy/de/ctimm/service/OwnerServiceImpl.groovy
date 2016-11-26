@@ -66,7 +66,6 @@ class OwnerServiceImpl implements OwnerService {
                 it.id = existingBill.id
             }
         }
-        billJPARepository.save(bills)
         bills.each {
             it.owner = existOwner
         }
@@ -75,6 +74,7 @@ class OwnerServiceImpl implements OwnerService {
                 existOwner.addBill(it)
             }
         }
+        billJPARepository.save(bills)
         this.addOwner(existOwner)
         return existOwner
     }

@@ -119,6 +119,8 @@ class FacturasController {
     private ResponseEntity<Map<String, Object>> processRuntimeException(HashMap<String, Object> values, RuntimeException re) {
         // TODO blacklist requestParams, that don't work for a certain time
         values.put("ErrorMessage", "Malformed request could not be processed " + re.getMessage())
+        logger.warn("Error processing request with message {}", re.message)
+        re.printStackTrace()
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.BAD_REQUEST)
     }
 
