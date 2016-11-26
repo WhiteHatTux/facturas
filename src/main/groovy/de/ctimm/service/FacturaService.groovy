@@ -11,6 +11,8 @@ interface FacturaService {
 
     Bill getBill(Integer account, int age)
 
+    List<Bill> getBills(Integer account)
+
     Double getDiscounts(Integer account, int age)
 
     String getIdentification(Integer account, int age)
@@ -26,5 +28,7 @@ interface FacturaService {
     Map<String, Object> getSummaryForBill(Integer account, int age)
 
     Double getTotalAmount(Integer account, int age)
+
+    void housekeep()
 
 }

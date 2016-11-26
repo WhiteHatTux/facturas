@@ -7,13 +7,13 @@ import de.ctimm.dao.OwnerJPARepository
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import org.junit.Before
+import org.mockito.ArgumentCaptor
 
 import java.text.SimpleDateFormat
 
 import static org.mockito.Matchers.anyInt
 import static org.mockito.Matchers.eq
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.when
+import static org.mockito.Mockito.*
 
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
@@ -74,15 +74,21 @@ class FacturaServiceImplTest extends GroovyTestCase {
     static void compareOwners(Owner expected, Owner actual) {
         actual.properties.each { def key, def value ->
             if (key != "collectionTimestamp" && key != "billsList") {
-                assertEquals(((String)key + " was different"), expected.(key.toString()), value)
+                assertEquals(((String) key + " was different"), expected.(key.toString()), value)
             }
         }
     }
 
-    static void compareBills(Bill expected, Bill actual){
+    static void compareBills(Bill expected, Bill actual) {
         actual.properties.each { def key, def value ->
             if (key != "collectionTimestamp") {
-                assertEquals(((String)key + " was different"), expected.(key.toString()), value)
+                if (key == "xml") {
+                    String xmlValue = ((String) value).replaceAll("\\s", "")
+                    String xmlExpected = ((String) expected.(key.toString())).replaceAll("\\s", "")
+                    assertEquals("XML was different", xmlExpected, xmlValue)
+                } else {
+                    assertEquals(((String) key + " was different"), expected.(key.toString()), value)
+                }
             }
         }
     }
@@ -103,7 +109,7 @@ class FacturaServiceImplTest extends GroovyTestCase {
         }
     }
 
-    void testGetSummaryForOldBill() {
+    void testGetSummaryForBill() {
         Owner expectedResultOwner = testDataCreator.createTestOwner()
         Bill expectedBill = testDataCreator.createTestBill(1)
         Map<String, Object> expectedResult = new HashMap<>()
@@ -119,4 +125,86 @@ class FacturaServiceImplTest extends GroovyTestCase {
             assertEquals(value, actualResult.get(key))
         }
     }
+
+    void testHousekeepDupliateBill() {
+        Owner owner = testDataCreator.createTestOwner()
+        Bill bill0 = testDataCreator.createTestBill(0)
+        owner.billsList.add(bill0)
+        // There should be a duplicate bill in here
+        assertEquals(3, owner.billsList.size())
+        when(ownerRepository.findAll()).thenReturn(Collections.singletonList(owner))
+        List<Owner> owners = ownerService.getAllOwners()
+
+        facturaService.housekeep()
+        verify(billJPARepository, times(1)).delete(bill0)
+        // The duplicate bill should be deleted by now
+        assertEquals(2, owners.get(0).billsList.size())
+    }
+
+    void testHouseKeepBillData() {
+        Bill bill0 = testDataCreator.createTestBill(0)
+        Bill bill1 = testDataCreator.createTestBill(1)
+        bill0.total = null
+        when(billJPARepository.findAll()).thenReturn([bill0, bill1])
+        final ArgumentCaptor<Bill> billArgumentCaptor = ArgumentCaptor.forClass(Bill.class)
+        facturaService.housekeep()
+        verify(billJPARepository).save(billArgumentCaptor.capture())
+        assertEquals(27.51, billArgumentCaptor.getValue().total)
+    }
+
+
+    void testGetBill() {
+        Bill expectedbill = testDataCreator.createTestBill(0)
+        Owner owner = testDataCreator.createTestOwner();
+        owner.billsList.each { it.xml = null }
+        when(ownerRepository.findByAccount(testAccount)).thenReturn(owner)
+        Bill actualBill = facturaService.getBill(testAccount, 0)
+        compareBills(expectedbill, actualBill)
+    }
+
+    void testGetBills() {
+        List<Bill> bills = facturaService.getBills(testAccount)
+        assertEquals(2, bills.size())
+
+    }
+
+    void testGetDiscounts() {
+        Double discounts = facturaService.getDiscounts(testAccount, 0)
+        assertEquals(0.0, discounts)
+    }
+
+    void testGetIssueDate() {
+        Date issueDate = facturaService.getIssueDate(testAccount, 0)
+        assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-10-18 00:00:00"), issueDate)
+    }
+
+    void testGetDateOfAuthorization() {
+        Date dateOfAuthorization = facturaService.getDateOfAuthorization(testAccount, 0)
+        assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-10-19 10:47:59"), dateOfAuthorization)
+    }
+
+    void testGetNonExistingBill(){
+        Map<String, Object> result = facturaService.getSummaryForBill(testAccount, 4)
+
+        assertEquals(result.get("message"), "The requested bill does not exist, Returning the oldest bill")
+    }
+
+
+    void testforceUpdateOwner(){
+        // test rest api is manipulated to return a bogus name
+        testNotificationData = testNotificationData.replace('LOPEZ ESCOBAR  ROBERTO PABLO ', 'This is the name, returned from the mocked REST API')
+        when(billDao.getOwnerHtml(anyInt())).thenReturn(testNotificationData)
+
+
+        // Currently the owner is set to one value
+        FacturaServiceImpl facturaService1 = (FacturaServiceImpl) facturaService
+        Owner owner = facturaService1.getOwner(testAccount)
+        assertEquals(owner.name, 'LOPEZ ESCOBAR  ROBERTO PABLO ')
+
+        // so when we do a force refresh the local name will be replaced by the bogus one.
+        facturaService1.forceReloadOwner = true
+        Owner actualOwner = facturaService1.getOwner(testAccount)
+        assertEquals('This is the name, returned from the mocked REST API', actualOwner.name)
+    }
+
 }

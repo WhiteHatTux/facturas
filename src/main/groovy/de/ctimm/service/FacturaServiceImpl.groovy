@@ -42,22 +42,52 @@ class FacturaServiceImpl implements FacturaService {
         this.billJPARepository = billJPARepository
     }
 
-    @PostConstruct
-    private void init(){
-        def billsList = billJPARepository.findAll()
-        billsList.each {
-            ensureBillDataIsfilled(it)
-        }
-    }
-
     private ensureBillDataIsfilled(Bill bill) {
-        if (bill.getXml() != null) {
+        if (bill.getXml() != null && bill.total == null) {
             bill.total = Double.valueOf((String) bill.getXml().infoFactura.importeTotal.text())
             bill.discounts = Double.valueOf((String) bill.getXml().infoFactura.totalDescuento.text())
             bill.identification = bill.getXml().infoFactura.identificacionComprador.text()
             billJPARepository.save(bill)
             logger.info("Filled missing billData for {}", bill)
         }
+    }
+
+    private void cleanBills(Owner owner) {
+        logger.info("Starting to clean bills for {}", owner)
+        def bills = owner.billsList.sort { it.id }
+        def billstoKeep = []
+        def billstoDelete = []
+        bills.each {
+            if (!billstoKeep.contains(it)) {
+                billstoKeep.add(it)
+            } else {
+                billstoDelete.add(it)
+            }
+        }
+        logger.info("Will delete {} bills for owner {}", billstoDelete.size(), owner)
+        logger.info("Will keep {} bills for owner {}", billstoKeep.size(), owner)
+        billstoDelete.each {
+            billJPARepository.delete(it)
+        }
+        if (billstoDelete.size() > 0) {
+            owner.billsList = billstoKeep
+            ownerService.updateOwner(owner.account)
+        }
+    }
+
+    @Override
+    public void housekeep(){
+        List<Owner> owners = ownerService.getAllOwners()
+        owners.each {
+            cleanBills(it)
+        }
+
+        def billsList = billJPARepository.findAll()
+        billsList.each {
+            ensureBillDataIsfilled(it)
+        }
+
+
     }
 
     @Override
@@ -85,6 +115,13 @@ class FacturaServiceImpl implements FacturaService {
         return bill
     }
 
+    @Override
+    List<Bill> getBills(Integer account) {
+        Owner owner = getOwner(account)
+        return owner.billsList.sort { it.issued }
+    }
+
+    @Override
     Owner getOwner(Integer account) {
         logger.debug("getOwner")
         if (forceReloadOwner) {

@@ -12,6 +12,8 @@ interface OwnerService {
 
     Owner getOwner(Integer account)
 
+    List<Owner> getAllOwners()
+
     void addOwner(Owner owner)
 
     void deleteOwner(Integer account)

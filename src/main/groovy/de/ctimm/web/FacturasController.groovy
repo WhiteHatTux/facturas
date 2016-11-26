@@ -67,6 +67,21 @@ class FacturasController {
         getBillForAge(account, age);
     }
 
+    @RequestMapping(value = "/v1/{account}/bills", method = RequestMethod.GET)
+    ResponseEntity<List<Bill>> getBillsForAccount(
+            @PathVariable Integer account
+    ){
+        List<Bill> billList = facturaService.getBills(account)
+        return new ResponseEntity<List<Bill>>(billList, HttpStatus.OK)
+    }
+
+    @RequestMapping(value = "/v1/housekeep", method = RequestMethod.POST)
+    ResponseEntity<Void> housekeep(){
+        logger.info("Start housekeeping")
+        facturaService.housekeep()
+        logger.info("Finished housekeeping")
+        return new ResponseEntity<Void>(HttpStatus.OK)
+    }
 
     @RequestMapping(value = "/v1/{account}/{age}/bill", method = RequestMethod.GET)
     ResponseEntity<Bill> getBillForAge(
@@ -77,6 +92,11 @@ class FacturasController {
         return new ResponseEntity<Bill>(bill, HttpStatus.OK);
     }
 
+    /**
+     * Create a summary for the corresponding account with the ownerdata and the newest bill
+     * @param account
+     * @return
+     */
     @ApiOperation(
             value = "Get a basic summary of the requested account and the last bill",
             responseContainer = 'Map<String,Object>'
@@ -102,6 +122,13 @@ class FacturasController {
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.BAD_REQUEST)
     }
 
+    /**
+     * Get the owner data and the bill of the supplied age
+     *
+     * @param account
+     * @param age
+     * @return
+     */
     @RequestMapping(value = "/v1/{account}/{age}", method = RequestMethod.GET)
     ResponseEntity<Map<String, Object>> getSummaryForBill(
             @ApiParam(value = "AcountNumber as seen on the box in front of the house", required = true) @PathVariable Integer account,
@@ -118,6 +145,11 @@ class FacturasController {
         return new ResponseEntity<Map<String, Object>>(values, HttpStatus.OK)
     }
 
+    /**
+     * Force the update of the user for the requested account and return the newest values
+     * @param account
+     * @return
+     */
     @ApiOperation(
             value = "Get a basic summary of the requested account and the last bill and update data, that can get old",
             responseContainer = 'Map<String,Object>'

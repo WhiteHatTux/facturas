@@ -49,7 +49,7 @@ class TestDataCreator {
             expectedResultBill.issued = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-10-18 00:00:00")
             expectedResultBill.total = 27.51
             expectedResultBill.xmlNumber = 6069973
-            expectedResultBill.xml = testBill
+            expectedResultBill.xml = testComprobante
             return expectedResultBill
         } else if (age == 1) {
             Bill expectedResultBill = new Bill(testAccount)

@@ -56,8 +56,13 @@ class Bill {
 
     }
 
-    void setXml(def xml) {
-        this.xml = XmlUtil.serialize(xml)
+    void setXml(xml) {
+        if (xml == null) {
+            this.xml = null
+        } else {
+            this.xml = XmlUtil.serialize(xml)
+        }
+
     }
 
 
@@ -70,12 +75,9 @@ class Bill {
         if (accessKey != bill.accessKey) return false
         if (account != bill.account) return false
         if (dateOfAuthorization != bill.dateOfAuthorization) return false
-        if (discounts != bill.discounts) return false
-        if (identification != bill.identification) return false
         if (issued != bill.issued) return false
         if (number != bill.number) return false
         if (owner != bill.owner) return false
-        if (total != bill.total) return false
 
         return true
     }
@@ -88,9 +90,6 @@ class Bill {
         result = 31 * result + (issued != null ? issued.hashCode() : 0)
         result = 31 * result + (accessKey != null ? accessKey.hashCode() : 0)
         result = 31 * result + (dateOfAuthorization != null ? dateOfAuthorization.hashCode() : 0)
-        result = 31 * result + (total != null ? total.hashCode() : 0)
-        result = 31 * result + (identification != null ? identification.hashCode() : 0)
-        result = 31 * result + (discounts != null ? discounts.hashCode() : 0)
         return result
     }
 

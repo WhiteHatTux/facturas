@@ -14,6 +14,6 @@ interface BillJPARepository extends CrudRepository<Bill, Long> {
 
     Page<Bill> findAll(Pageable pageable)
 
-    Bill save(Bill bill)
+    Bill findByNumber(String number)
 
 }
