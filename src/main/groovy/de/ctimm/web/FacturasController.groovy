@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
@@ -67,10 +68,19 @@ class FacturasController {
         getBillForAge(account, age);
     }
 
+    /**
+     * Get a list of all bills for the corrsponding account
+     * @param account
+     * @return
+     */
     @RequestMapping(value = "/v1/{account}/bills", method = RequestMethod.GET)
     ResponseEntity<List<Bill>> getBillsForAccount(
-            @PathVariable Integer account
+            @PathVariable Integer account,
+            @RequestParam(name = "force", defaultValue = "false") Boolean forceUpdate
     ){
+        if (forceUpdate){
+            facturaService.getSummary(account, true)
+        }
         List<Bill> billList = facturaService.getBills(account)
         return new ResponseEntity<List<Bill>>(billList, HttpStatus.OK)
     }
