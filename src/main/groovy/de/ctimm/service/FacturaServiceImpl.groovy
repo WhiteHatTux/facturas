@@ -131,14 +131,13 @@ class FacturaServiceImpl implements FacturaService {
     List<Bill> getBills(Integer account) {
         Owner owner = getOwner(account)
         List<Bill> billList = owner.billsList.sort { it.issued }
-        if (billList.last().total == null) {
-            ensureBillDataIsfilled(billList.last())
-            // This will be returned, if the last bill had to be fetched and set
-            return this.getBills(account)
-        } else {
-            // This will be returned if the last bill already has a total value
-            return billList
+        def length = billList.size()
+        [length-1,length-2,length-3].each {
+            if (it >= 0) {
+                ensureBillDataIsfilled(billList.get(it))
+            }
         }
+        return billList
     }
 
     @Override
