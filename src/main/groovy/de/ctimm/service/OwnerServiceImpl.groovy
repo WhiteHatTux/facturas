@@ -66,8 +66,13 @@ class OwnerServiceImpl implements OwnerService {
             Bill existingBill = billJPARepository.findByNumber(it.number)
             if (existingBill == null) {
                 it = billJPARepository.save(it)
+                
             } else {
-                it = existingBill
+                it.id = existingBill.id
+                it.xml = existingBill.xml
+                it.total = existingBill.total
+                it.identification = existingBill.identification
+                it.discounts = existingBill.discounts
             }
             if (existOwner.getBill(it.number) != null) {
                 logger.debug("Bill with number {} already exists, not reloading", it.number)

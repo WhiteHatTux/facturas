@@ -4,11 +4,14 @@ import de.ctimm.TestDataCreator
 import de.ctimm.dao.BillDao
 import de.ctimm.dao.BillJPARepository
 import de.ctimm.dao.OwnerJPARepository
+import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import groovy.time.Duration
 import groovy.time.TimeCategory
 import org.junit.Before
 import org.mockito.ArgumentCaptor
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 import static org.mockito.Matchers.anyInt
 import static org.mockito.Mockito.*
@@ -32,6 +35,8 @@ class OwnerServiceImplTest extends GroovyTestCase {
     String testBill = testDataCreator.testBill
     String testNotificationData = testDataCreator.testNotificationData
 
+    int billReturnCounter = 1
+
     @Before
     void setUp() {
         billDao = mock(BillDao.class)
@@ -39,9 +44,18 @@ class OwnerServiceImplTest extends GroovyTestCase {
         when(billDao.getBillHtml(anyInt())).thenReturn(testResponse)
         when(billDao.getOwnerHtml(anyInt())).thenReturn(testNotificationData)
 
-        ResponseParser responseParser = new ResponseParser(billDao);
-        ownerRepository = mock(OwnerJPARepository.class);
+        ResponseParser responseParser = new ResponseParser(billDao)
+        ownerRepository = mock(OwnerJPARepository.class)
         billJPARepository = mock(BillJPARepository.class)
+        when(billJPARepository.save(any(Bill.class))).thenAnswer(new Answer<Bill>() {
+            @Override
+            Bill answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Bill bill = invocationOnMock.getArgumentAt(0, Bill.class)
+                bill.id = billReturnCounter
+                billReturnCounter++
+                return bill
+            }
+        })
         ownerService = new OwnerServiceImpl(responseParser, ownerRepository, billDao, billJPARepository)
         ownerArgumentCaptor
     }

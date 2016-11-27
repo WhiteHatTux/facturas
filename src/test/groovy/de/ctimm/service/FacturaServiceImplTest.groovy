@@ -8,11 +8,12 @@ import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
 import org.junit.Before
 import org.mockito.ArgumentCaptor
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 import java.text.SimpleDateFormat
 
-import static org.mockito.Matchers.anyInt
-import static org.mockito.Matchers.eq
+import static org.mockito.Matchers.*
 import static org.mockito.Mockito.*
 
 /**
@@ -34,6 +35,8 @@ class FacturaServiceImplTest extends GroovyTestCase {
     String testBill1 = testDataCreator.testBill1
     String testNotificationData = testDataCreator.testNotificationData
 
+    int billReturnCounter = 1
+
     @Before
     void setUp() {
         billDao = mock(BillDao.class)
@@ -46,6 +49,15 @@ class FacturaServiceImplTest extends GroovyTestCase {
         responseParser = new ResponseParser(billDao)
         ownerRepository = mock(OwnerJPARepository.class)
         billJPARepository = mock(BillJPARepository.class)
+        when(billJPARepository.save(any(Bill.class))).thenAnswer(new Answer<Bill>() {
+            @Override
+            Bill answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Bill bill = invocationOnMock.getArgumentAt(0, Bill.class)
+                bill.id = billReturnCounter
+                billReturnCounter++
+                return bill
+            }
+        })
         when(ownerRepository.findByAccount(testAccount)).thenReturn(testDataCreator.createTestOwner())
         ownerService = new OwnerServiceImpl(responseParser, ownerRepository, billDao, billJPARepository)
         facturaService = new FacturaServiceImpl(responseParser, billDao, ownerService, billJPARepository)
@@ -81,7 +93,7 @@ class FacturaServiceImplTest extends GroovyTestCase {
 
     static void compareBills(Bill expected, Bill actual) {
         actual.properties.each { def key, def value ->
-            if (key != "collectionTimestamp") {
+            if (key != "collectionTimestamp" && key != "id") {
                 if (key == "xml") {
                     String xmlValue = ((String) value).replaceAll("\\s", "")
                     String xmlExpected = ((String) expected.(key.toString())).replaceAll("\\s", "")
@@ -183,18 +195,17 @@ class FacturaServiceImplTest extends GroovyTestCase {
         assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-10-19 10:47:59"), dateOfAuthorization)
     }
 
-    void testGetNonExistingBill(){
+    void testGetNonExistingBill() {
         Map<String, Object> result = facturaService.getSummaryForBill(testAccount, 4)
 
         assertEquals(result.get("message"), "The requested bill does not exist, Returning the oldest bill")
     }
 
 
-    void testforceUpdateOwner(){
+    void testforceUpdateOwner() {
         // test rest api is manipulated to return a bogus name
         testNotificationData = testNotificationData.replace('LOPEZ ESCOBAR  ROBERTO PABLO ', 'This is the name, returned from the mocked REST API')
         when(billDao.getOwnerHtml(anyInt())).thenReturn(testNotificationData)
-
 
         // Currently the owner is set to one value
         FacturaServiceImpl facturaService1 = (FacturaServiceImpl) facturaService
