@@ -51,7 +51,10 @@ class FacturaServiceImpl implements FacturaService {
     }
 
     private ensureBillDataIsfilled(Bill bill) {
-        if (bill.getXml() != null && bill.total == null) {
+        if (bill.getXml() == null) {
+            bill.setXml(responseParser.getXml(bill))
+        }
+        if (bill.total == null) {
             bill.total = Double.valueOf((String) bill.getXml().infoFactura.importeTotal.text())
             bill.discounts = Double.valueOf((String) bill.getXml().infoFactura.totalDescuento.text())
             bill.identification = bill.getXml().infoFactura.identificacionComprador.text()
@@ -92,7 +95,11 @@ class FacturaServiceImpl implements FacturaService {
 
         def billsList = billJPARepository.findAll()
         billsList.each {
-            ensureBillDataIsfilled(it)
+            // Only fix values for those, that already have xml fetched.
+            // We don't want to load a bunch of unnecessary xmls
+            if (it.xml != null) {
+                ensureBillDataIsfilled(it)
+            }
         }
 
 
@@ -108,10 +115,7 @@ class FacturaServiceImpl implements FacturaService {
         def length = bills.size()
         Bill bill = bills.get(length - age - 1)
         if (bill.getXml() == null) {
-            bill.setXml(responseParser.getXml(bill))
-            bill.total = Double.valueOf((String) bill.getXml().infoFactura.importeTotal.text())
-            bill.discounts = Double.valueOf((String) bill.getXml().infoFactura.totalDescuento.text())
-            bill.identification = bill.getXml().infoFactura.identificacionComprador.text()
+            ensureBillDataIsfilled(bill)
             billJPARepository.save(bill)
             owner.addBill(bill)
         } else {
@@ -126,7 +130,15 @@ class FacturaServiceImpl implements FacturaService {
     @Override
     List<Bill> getBills(Integer account) {
         Owner owner = getOwner(account)
-        return owner.billsList.sort { it.issued }
+        List<Bill> billList = owner.billsList.sort { it.issued }
+        if (billList.last().total == null) {
+            ensureBillDataIsfilled(billList.last())
+            // This will be returned, if the last bill had to be fetched and set
+            return this.getBills(account)
+        } else {
+            // This will be returned if the last bill already has a total value
+            return billList
+        }
     }
 
     @Override

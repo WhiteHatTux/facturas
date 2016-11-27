@@ -70,6 +70,9 @@ class FacturasController {
 
     /**
      * Get a list of all bills for the corrsponding account
+     * this API will deliver all bills, but the {@link Bill#total} value might be null.
+     * It is however <b>always</b> filled for the most current bill
+     *
      * @param account
      * @return
      */
