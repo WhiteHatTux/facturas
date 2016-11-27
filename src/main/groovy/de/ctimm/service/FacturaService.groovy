@@ -9,6 +9,10 @@ import de.ctimm.domain.Owner
  */
 interface FacturaService {
 
+    boolean getForceReloadOwner()
+
+    void setForceReloadOwner(boolean forceReloadOwner)
+
     Bill getBill(Integer account, int age)
 
     List<Bill> getBills(Integer account)

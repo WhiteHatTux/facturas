@@ -58,23 +58,23 @@ class OwnerServiceImpl implements OwnerService {
         // Get the updated list of current bills
         String html = billDao.getBillHtml(account)
         List<Bill> bills = responseParser.getBills(html, account)
-        // As the JPARepository will check for the id to decide, if an object is new or not
-        // I need to search the bills first and then assign them the ids I found in the db
         bills.each {
-            Bill existingBill = billJPARepository.findByNumber(it.number)
-            if (existingBill != null) {
-                it.id = existingBill.id
-            }
-        }
-        bills.each {
+            // This creates the link between the bill and the owner
             it.owner = existOwner
-        }
-        bills.each {
-            if (existOwner.getBill(it.number) == null) {
+            // I only want to save the bill, if it is new
+            // otherwise i just add the id from the database to it.
+            Bill existingBill = billJPARepository.findByNumber(it.number)
+            if (existingBill == null) {
+                it = billJPARepository.save(it)
+            } else {
+                it = existingBill
+            }
+            if (existOwner.getBill(it.number) != null) {
+                logger.debug("Bill with number {} already exists, not reloading", it.number)
+            } else {
                 existOwner.addBill(it)
             }
         }
-        billJPARepository.save(bills)
         this.addOwner(existOwner)
         return existOwner
     }
@@ -96,7 +96,8 @@ class OwnerServiceImpl implements OwnerService {
 
     @Override
     void addOwner(Owner owner) {
-        ownerRepository.save(owner)
+        Owner owner1 = ownerRepository.save(owner)
+        owner1
     }
 
     @Override

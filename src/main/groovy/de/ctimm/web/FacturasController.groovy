@@ -64,8 +64,8 @@ class FacturasController {
             @PathVariable Integer account,
             @PathVariable Integer age
     ){
-        facturaService.getSummary(account, true);
-        getBillForAge(account, age);
+        facturaService.setForceReloadOwner(true)
+        getBillForAge(account, age)
     }
 
     /**
@@ -78,9 +78,7 @@ class FacturasController {
             @PathVariable Integer account,
             @RequestParam(name = "force", defaultValue = "false") Boolean forceUpdate
     ){
-        if (forceUpdate){
-            facturaService.getSummary(account, true)
-        }
+        facturaService.setForceReloadOwner(forceUpdate)
         List<Bill> billList = facturaService.getBills(account)
         return new ResponseEntity<List<Bill>>(billList, HttpStatus.OK)
     }

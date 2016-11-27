@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-import javax.annotation.PostConstruct
-
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
  *
@@ -32,7 +30,17 @@ class FacturaServiceImpl implements FacturaService {
 
     private BillDao billDao
 
-    boolean forceReloadOwner = false
+    private boolean forceReloadOwner = false
+
+    @Override
+    boolean getForceReloadOwner() {
+        return forceReloadOwner
+    }
+
+    @Override
+    void setForceReloadOwner(boolean forceReloadOwner) {
+        this.forceReloadOwner = forceReloadOwner
+    }
 
     @Autowired
     FacturaServiceImpl(ResponseParser responseParser, BillDao billDao, OwnerService ownerService, BillJPARepository billJPARepository) {
@@ -76,7 +84,7 @@ class FacturaServiceImpl implements FacturaService {
     }
 
     @Override
-    public void housekeep(){
+    public void housekeep() {
         List<Owner> owners = ownerService.getAllOwners()
         owners.each {
             cleanBills(it)
