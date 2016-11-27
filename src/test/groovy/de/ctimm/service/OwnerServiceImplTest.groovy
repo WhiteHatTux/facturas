@@ -13,7 +13,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
-import static org.mockito.Matchers.anyInt
+import static org.mockito.Matchers.*
 import static org.mockito.Mockito.*
 
 /**
@@ -45,7 +45,17 @@ class OwnerServiceImplTest extends GroovyTestCase {
         when(billDao.getOwnerHtml(anyInt())).thenReturn(testNotificationData)
 
         ResponseParser responseParser = new ResponseParser(billDao)
+
         ownerRepository = mock(OwnerJPARepository.class)
+        when(ownerRepository.save(any(Owner.class))).thenAnswer(new Answer<Owner>() {
+            @Override
+            Owner answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Owner savedOwner = (Owner) invocationOnMock.getArgumentAt(0, Owner.class)
+                savedOwner.id = 1
+                return savedOwner
+            }
+        })
+
         billJPARepository = mock(BillJPARepository.class)
         when(billJPARepository.save(any(Bill.class))).thenAnswer(new Answer<Bill>() {
             @Override
@@ -56,6 +66,7 @@ class OwnerServiceImplTest extends GroovyTestCase {
                 return bill
             }
         })
+
         ownerService = new OwnerServiceImpl(responseParser, ownerRepository, billDao, billJPARepository)
         ownerArgumentCaptor
     }
@@ -64,6 +75,20 @@ class OwnerServiceImplTest extends GroovyTestCase {
         Owner owner = new Owner(testAccount)
         owner.name = "something"
         ownerService.updateOwner(testAccount)
+        // The owner does not yet exist, so it is saved before adding the bills and after (2 times in total)
+        verify(ownerRepository, times(2)).save(ownerArgumentCaptor.capture())
+        Owner actualOwner = ownerArgumentCaptor.getValue()
+        assertEquals(22, actualOwner.billsList.size())
+        assertEquals("LOPEZ ESCOBAR  ROBERTO PABLO ", actualOwner.name)
+    }
+
+
+    void testUpdateExistingOwner() {
+        Owner owner = new Owner(testAccount)
+        owner.name = "something"
+        when(ownerRepository.findByAccount(testAccount)).thenReturn(testDataCreator.createTestOwner())
+        ownerService.updateOwner(testAccount)
+        // The owner already exists, so it is saved only once after saving the bills
         verify(ownerRepository).save(ownerArgumentCaptor.capture())
         Owner actualOwner = ownerArgumentCaptor.getValue()
         assertEquals(22, actualOwner.billsList.size())
@@ -113,6 +138,7 @@ class OwnerServiceImplTest extends GroovyTestCase {
         ownerService.addOwner(owner)
         verify(ownerRepository).save(ownerArgumentCaptor.capture())
         when(ownerRepository.findAll()).thenReturn(Collections.singletonList(ownerArgumentCaptor.getValue()))
+        when(ownerRepository.findByAccount(eq(testAccount))).thenReturn(ownerArgumentCaptor.getValue())
         ownerService.updateExpired()
         verify(ownerRepository, times(2)).save(ownerArgumentCaptor.capture())
         Owner actualOwner = ownerArgumentCaptor.getValue()

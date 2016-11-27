@@ -30,10 +30,10 @@ class OwnerServiceImpl implements OwnerService {
 
     private BillDao billDao
 
-    private static final Logger logger = LoggerFactory.getLogger(OwnerServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(OwnerServiceImpl.class)
 
     @Autowired
-    public OwnerServiceImpl(ResponseParser responseParser, OwnerJPARepository ownerRepository, BillDao billDao, BillJPARepository billJPARepository) {
+    OwnerServiceImpl(ResponseParser responseParser, OwnerJPARepository ownerRepository, BillDao billDao, BillJPARepository billJPARepository) {
         this.responseParser = responseParser
         this.ownerRepository = ownerRepository
         this.billDao = billDao
@@ -55,6 +55,10 @@ class OwnerServiceImpl implements OwnerService {
         existOwner.cellphone = owner.cellphone
         existOwner.phone = owner.phone
         existOwner.direction = owner.direction
+        // Save the owner, if the object is not yet in the database. Otherwise bills can't be saved, that reference the object
+        if (ownerRepository.findByAccount(account) == null) {
+            existOwner = this.addOwner(owner)
+        }
         // Get the updated list of current bills
         String html = billDao.getBillHtml(account)
         List<Bill> bills = responseParser.getBills(html, account)
@@ -66,7 +70,6 @@ class OwnerServiceImpl implements OwnerService {
             Bill existingBill = billJPARepository.findByNumber(it.number)
             if (existingBill == null) {
                 it = billJPARepository.save(it)
-                
             } else {
                 it.id = existingBill.id
                 it.xml = existingBill.xml
@@ -100,7 +103,7 @@ class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    void addOwner(Owner owner) {
+    Owner addOwner(Owner owner) {
         Owner owner1 = ownerRepository.save(owner)
         owner1
     }
