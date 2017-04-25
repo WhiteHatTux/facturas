@@ -218,4 +218,10 @@ class FacturaServiceImplTest extends GroovyTestCase {
         assertEquals('This is the name, returned from the mocked REST API', actualOwner.name)
     }
 
+    void testGetAllAccounts() {
+        Owner actualOwner = facturaService.getOwner(testAccount)
+        when(ownerRepository.findAll()).thenReturn(Collections.singletonList(actualOwner))
+        assertEquals(Collections.singletonList(testAccount), facturaService.getAccountList())
+    }
+
 }
