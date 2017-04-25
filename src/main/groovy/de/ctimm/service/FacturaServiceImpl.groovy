@@ -106,6 +106,12 @@ class FacturaServiceImpl implements FacturaService {
     }
 
     @Override
+    List<Integer> getAccountList() {
+        List<Owner> ownerList = ownerService.getAllOwners();
+        return ownerList.account
+    }
+
+    @Override
     public Bill getBill(Integer account, int age) {
         logger.debug("getBill for account {} and age {}", account, age)
         getOwner(account)

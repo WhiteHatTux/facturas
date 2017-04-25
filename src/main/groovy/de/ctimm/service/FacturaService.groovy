@@ -35,4 +35,5 @@ interface FacturaService {
 
     void housekeep()
 
+    List<Integer> getAccountList()
 }
