@@ -107,8 +107,8 @@ class FacturaServiceImpl implements FacturaService {
 
     @Override
     List<Integer> getAccountList() {
-        List<Owner> ownerList = ownerService.getAllOwners();
-        return ownerList.account
+        List<Owner> ownerList = ownerService.getAllOwners()
+        return ownerList.account.sort()
     }
 
     @Override
