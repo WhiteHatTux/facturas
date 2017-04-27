@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.xml.XmlUtil
 
 import javax.persistence.*
-import java.sql.Timestamp
 
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
@@ -30,6 +29,9 @@ class Bill {
     String accessKey
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     Date dateOfAuthorization
+    @Transient
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    Date dateOfNecessaryPayment
     @JsonIgnore
     @Lob
     private String xml

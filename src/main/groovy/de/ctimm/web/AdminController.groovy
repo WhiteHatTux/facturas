@@ -37,13 +37,15 @@ class AdminController {
     }
 
     @RequestMapping(value = "owners", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Integer>> getOwnerList() {
+    public ResponseEntity<List<Map<String, Integer>>> getOwnerList() {
         List<Owner> owners = ownerService.getAllOwners()
-        def resultList = [:]
+        def resultList = new ArrayList()
         owners.each {
-            resultList.put(it.name, it.account)
+            def resultMap = [:]
+            resultMap.put(it.name, it.account)
+            resultList.add(resultMap)
         }
         resultList = resultList.sort()
-        return new ResponseEntity<Map<String,Integer>>(resultList, HttpStatus.OK)
+        return new ResponseEntity<>(resultList, HttpStatus.OK)
     }
 }

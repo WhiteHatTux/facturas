@@ -4,6 +4,7 @@ import de.ctimm.dao.BillDao
 import de.ctimm.dao.BillJPARepository
 import de.ctimm.domain.Bill
 import de.ctimm.domain.Owner
+import groovy.time.TimeCategory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -123,6 +124,9 @@ class FacturaServiceImpl implements FacturaService {
                 ensureBillDataIsfilled(bill)
                 logger.warn("Billdata was not up-to-date for bill {}", bill)
             }
+        }
+        use (TimeCategory) {
+            bill.dateOfNecessaryPayment = bill.dateOfAuthorization + (Integer.valueOf(bill.xml.infoFactura.pagos.pago.plazo.text())).day
         }
         return bill
     }
