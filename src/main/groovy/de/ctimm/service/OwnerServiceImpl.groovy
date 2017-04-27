@@ -98,6 +98,12 @@ class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    List<Integer> getAccountList() {
+        List<Owner> ownerList = getAllOwners()
+        return ownerList.account.sort()
+    }
+
+    @Override
     List<Owner> getAllOwners() {
         (List<Owner>) ownerRepository.findAll()
     }

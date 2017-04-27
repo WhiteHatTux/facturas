@@ -144,4 +144,11 @@ class OwnerServiceImplTest extends GroovyTestCase {
         Owner actualOwner = ownerArgumentCaptor.getValue()
         assertNotSame(yesterday, actualOwner.collectionTimestamp)
     }
+
+
+    void testGetAllAccounts() {
+        Owner actualOwner = new Owner(testAccount)
+        when(ownerRepository.findAll()).thenReturn(Collections.singletonList(actualOwner))
+        assertEquals(Collections.singletonList(testAccount), ownerService.getAccountList())
+    }
 }

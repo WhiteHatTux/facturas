@@ -10,6 +10,8 @@ interface OwnerService {
 
     Owner updateOwner(Integer account)
 
+    List<Integer> getAccountList()
+
     Owner getOwner(Integer account)
 
     List<Owner> getAllOwners()

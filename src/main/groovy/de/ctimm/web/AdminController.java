@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import de.ctimm.service.FacturaService;
+import de.ctimm.service.OwnerService;
 import io.swagger.annotations.Api;
 
 /**
@@ -29,10 +30,10 @@ public class AdminController {
   private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
   @Autowired
-  private FacturaService facturaService;
+  private OwnerService ownerService;
 
   @RequestMapping(value = "accountList", method = RequestMethod.GET)
   public ResponseEntity<List<Integer>> getAccountList() {
-    return new ResponseEntity<>(facturaService.getAccountList(), HttpStatus.OK);
+    return new ResponseEntity<>(ownerService.getAccountList(), HttpStatus.OK);
   }
 }
