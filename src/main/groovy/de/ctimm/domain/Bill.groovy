@@ -29,7 +29,6 @@ class Bill {
     String accessKey
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     Date dateOfAuthorization
-    @Transient
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     Date dateOfNecessaryPayment
     @JsonIgnore

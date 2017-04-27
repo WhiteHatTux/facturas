@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
+import java.text.SimpleDateFormat
+
 /**
  * @author Christopher Timm <WhiteHatTux@timmch.de>
  *
@@ -61,6 +63,14 @@ class FacturaServiceImpl implements FacturaService {
             bill.identification = bill.getXml().infoFactura.identificacionComprador.text()
             billJPARepository.save(bill)
             logger.info("Filled missing billData for {}", bill)
+        }
+        if (bill.dateOfNecessaryPayment == null) {
+            use(TimeCategory) {
+                bill.dateOfNecessaryPayment =
+                        new SimpleDateFormat("dd/MM/yyyy").parse(bill.xml.infoFactura.fechaEmision.text()) +
+                                (Integer.valueOf(bill.xml.infoFactura.pagos.pago.plazo.text())).day
+            }
+
         }
     }
 
@@ -120,13 +130,7 @@ class FacturaServiceImpl implements FacturaService {
             billJPARepository.save(bill)
             owner.addBill(bill)
         } else {
-            if (bill.total == null) {
-                ensureBillDataIsfilled(bill)
-                logger.warn("Billdata was not up-to-date for bill {}", bill)
-            }
-        }
-        use (TimeCategory) {
-            bill.dateOfNecessaryPayment = bill.dateOfAuthorization + (Integer.valueOf(bill.xml.infoFactura.pagos.pago.plazo.text())).day
+            ensureBillDataIsfilled(bill)
         }
         return bill
     }
@@ -136,7 +140,7 @@ class FacturaServiceImpl implements FacturaService {
         Owner owner = getOwner(account)
         List<Bill> billList = owner.billsList.sort { it.issued }
         def length = billList.size()
-        [length-1,length-2,length-3].each {
+        [length - 1, length - 2, length - 3].each {
             if (it >= 0) {
                 ensureBillDataIsfilled(billList.get(it))
             }

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.0.0">
+    <infoTributaria>
+        <ambiente>2</ambiente>
+        <tipoEmision>1</tipoEmision>
+        <razonSocial>EMPRESA ELECTRICA AMBATO REGIONAL CENTRO NORTE S.A.</razonSocial>
+        <nombreComercial>EMPRESA ELECTRICA AMBATO REGIONAL CENTRO NORTE S.A.</nombreComercial>
+        <ruc>1890001439001</ruc>
+        <claveAcceso>1809201601189000143900120010120041953810419538112</claveAcceso>
+        <codDoc>01</codDoc>
+        <estab>001</estab>
+        <ptoEmi>012</ptoEmi>
+        <secuencial>004195381</secuencial>
+        <dirMatriz>12 DE NOVIEMBRE 11-29 Y ESPEJO</dirMatriz>
+    </infoTributaria>
+    <infoFactura>
+        <fechaEmision>18/09/2016</fechaEmision>
+        <dirEstablecimiento>12 DE NOVIEMBRE 11-29 Y ESPEJO</dirEstablecimiento>
+        <contribuyenteEspecial>5368</contribuyenteEspecial>
+        <obligadoContabilidad>SI</obligadoContabilidad>
+        <tipoIdentificacionComprador>05</tipoIdentificacionComprador>
+        <razonSocialComprador>LOPEZ ESCOBAR ROBERTO PABLO</razonSocialComprador>
+        <identificacionComprador>0200989077</identificacionComprador>
+        <direccionComprador>AVLOS ATISFEBRES CORDERO</direccionComprador>
+        <totalSinImpuestos>16.64</totalSinImpuestos>
+        <totalDescuento>0</totalDescuento>
+        <totalConImpuestos>
+            <totalImpuesto>
+                <codigo>2</codigo>
+                <codigoPorcentaje>0</codigoPorcentaje>
+                <baseImponible>16.64</baseImponible>
+                <valor>0</valor>
+            </totalImpuesto>
+        </totalConImpuestos>
+        <propina>0</propina>
+        <importeTotal>16.64</importeTotal>
+        <moneda>DOLAR</moneda>
+        <pagos>
+            <pago>
+                <formaPago>01</formaPago>
+                <total>16.64</total>
+                <plazo>10</plazo>
+                <unidadTiempo>Dias</unidadTiempo>
+            </pago>
+        </pagos>
+    </infoFactura>
+    <detalles>
+        <detalle>
+            <codigoPrincipal>AP</codigoPrincipal>
+            <codigoAuxiliar>114</codigoAuxiliar>
+            <descripcion>Alumbrado Publico</descripcion>
+            <cantidad>1</cantidad>
+            <precioUnitario>1.53</precioUnitario>
+            <descuento>0</descuento>
+            <precioTotalSinImpuesto>1.53</precioTotalSinImpuesto>
+            <impuestos>
+                <impuesto>
+                    <codigo>2</codigo>
+                    <codigoPorcentaje>0</codigoPorcentaje>
+                    <tarifa>0</tarifa>
+                    <baseImponible>1.53</baseImponible>
+                    <valor>0</valor>
+                </impuesto>
+            </impuestos>
+        </detalle>
+        <detalle>
+            <codigoPrincipal>CN</codigoPrincipal>
+            <codigoAuxiliar>100</codigoAuxiliar>
+            <descripcion>Valor Consumo</descripcion>
+            <cantidad>1</cantidad>
+            <precioUnitario>12.33</precioUnitario>
+            <descuento>0</descuento>
+            <precioTotalSinImpuesto>12.33</precioTotalSinImpuesto>
+            <impuestos>
+                <impuesto>
+                    <codigo>2</codigo>
+                    <codigoPorcentaje>0</codigoPorcentaje>
+                    <tarifa>0</tarifa>
+                    <baseImponible>12.33</baseImponible>
+                    <valor>0</valor>
+                </impuesto>
+            </impuestos>
+        </detalle>
+        <detalle>
+            <codigoPrincipal>SC</codigoPrincipal>
+            <codigoAuxiliar>222</codigoAuxiliar>
+            <descripcion>Subsidio Cruzado</descripcion>
+            <cantidad>1</cantidad>
+            <precioUnitario>1.37</precioUnitario>
+            <descuento>0</descuento>
+            <precioTotalSinImpuesto>1.37</precioTotalSinImpuesto>
+            <impuestos>
+                <impuesto>
+                    <codigo>2</codigo>
+                    <codigoPorcentaje>0</codigoPorcentaje>
+                    <tarifa>0</tarifa>
+                    <baseImponible>1.37</baseImponible>
+                    <valor>0</valor>
+                </impuesto>
+            </impuestos>
+        </detalle>
+        <detalle>
+            <codigoPrincipal>VC</codigoPrincipal>
+            <codigoAuxiliar>104</codigoAuxiliar>
+            <descripcion>Valor Comercializacion</descripcion>
+            <cantidad>1</cantidad>
+            <precioUnitario>1.41</precioUnitario>
+            <descuento>0</descuento>
+            <precioTotalSinImpuesto>1.41</precioTotalSinImpuesto>
+            <impuestos>
+                <impuesto>
+                    <codigo>2</codigo>
+                    <codigoPorcentaje>0</codigoPorcentaje>
+                    <tarifa>0</tarifa>
+                    <baseImponible>0</baseImponible>
+                    <valor>0</valor>
+                </impuesto>
+            </impuestos>
+        </detalle>
+    </detalles>
+    <infoAdicional>
+        <campoAdicional nombre="Codigo Suministro">0100194799</campoAdicional>
+        <campoAdicional nombre="Consumo ">133</campoAdicional>
+        <campoAdicional nombre="Contribucion Bomberos">1.83</campoAdicional>
+        <campoAdicional nombre="Direccion Cliente">AVLOS ATISFEBRES CORDERO</campoAdicional>
+        <campoAdicional nombre="Documento Registrado">0200989077</campoAdicional>
+        <campoAdicional nombre="Lectura Actual">923</campoAdicional>
+        <campoAdicional nombre="Lectura Anterior">790</campoAdicional>
+        <campoAdicional nombre="Nombre Cliente">LOPEZ ESCOBAR ROBERTO PABLO</campoAdicional>
+        <campoAdicional nombre="Tasa Basura">1.99</campoAdicional>
+    </infoAdicional>
+    <ds:Signature Id="Signature637002" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#">
+        <ds:SignedInfo Id="Signature-SignedInfo198607">
+            <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <ds:Reference Id="SignedPropertiesID265651" Type="http://uri.etsi.org/01903#SignedProperties"
+                          URI="#Signature637002-SignedProperties932763">
+                <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <ds:DigestValue>5CRdQ55y+yXaGjOnavUC45zy5nM=</ds:DigestValue>
+            </ds:Reference>
+            <ds:Reference URI="#Certificate1929294">
+                <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <ds:DigestValue>eEqPjHB6hqJjxc7P1kzf/mOkfJQ=</ds:DigestValue>
+            </ds:Reference>
+            <ds:Reference Id="Reference-ID-869803" URI="#comprobante">
+                <ds:Transforms>
+                    <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                </ds:Transforms>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <ds:DigestValue>YMIqb+tL57gdt74qfYJQ5l9LrlQ=</ds:DigestValue>
+            </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue Id="SignatureValue113039">
+            GS9yZkR3KXUGzpDIU23efFzRzlx8UmBRMuqVRB0yhNge4LX1OCbX2D7zg9MwNYOlhkfeYN8/+mNC
+            ziEcQ5nujFvEl1gb8x15i58PCew0pXzhM8oaODAYTbHHAud/GQuwO+m+1oCP8sXYxsRvKVxlpuYZ
+            4rRYOsvw3bcnz4bEkYSFuYdFIvx0bApgA67MZ1LwxwnGDjRjL5hzyYkv2mZnIzIaXLZqiSQwdS2v
+            pjSCBQV6DqnkRJlfzIi1aOL6T8H3V4XoXoGTmvYuiV6okaOy7Nb2Sl2lviV7ebTDWh5p+WNItRdd
+            LzaIwSvwpPszApKtatWSiWr0xrLaWiln4L0a1Q==
+        </ds:SignatureValue>
+        <ds:KeyInfo Id="Certificate1929294">
+            <ds:X509Data>
+                <ds:X509Certificate>
+                    MIIJsjCCB5qgAwIBAgIETkYzTzANBgkqhkiG9w0BAQsFADCBoTELMAkGA1UEBhMCRUMxIjAgBgNV
+                    BAoTGUJBTkNPIENFTlRSQUwgREVMIEVDVUFET1IxNzA1BgNVBAsTLkVOVElEQUQgREUgQ0VSVElG
+                    SUNBQ0lPTiBERSBJTkZPUk1BQ0lPTi1FQ0lCQ0UxDjAMBgNVBAcTBVFVSVRPMSUwIwYDVQQDExxB
+                    QyBCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMB4XDTE2MDMzMTEzMDczNVoXDTE4MDMzMTEzMzcz
+                    NVowgbExCzAJBgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9SMTcw
+                    NQYDVQQLEy5FTlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNFMQ4w
+                    DAYDVQQHEwVRVUlUTzE1MBEGA1UEBRMKMDAwMDA2NTk4MTAgBgNVBAMTGUFOR0VMIFhBVklFUiBM
+                    QVJBIFBFUkFMVEEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDNA0us8RiU85AkZT+5
+                    z6ElSzSg1RNCJpkAT4701Yp0H9bvI1MKk6FIT2tQ3CIWKBK68K3QoNDfCxiSKbkVwbua07wt39yF
+                    N9vvI2xufnZ1w0KkPQ0y/4LJvhyGICd19zsja6If5TQXEyEpFFCBmk1SfNOOKrBU4OKjKGbMYl8i
+                    R2RNp/hxjo2CEoOhBj0v+4FORTBqFxqE5vPwPm8sBBbmzQhkUcbS0DMsJYuShpG9sEgeATC6EVZO
+                    IbdBRokRX2oHHXtZy3sipN7emqemkwPoUtoy012y51zsNiUBl/Kkwj9sUY5J90S3l2VrSEQ+OO24
+                    rxMi9n3fGHQcE82ZSUq5AgMBAAGjggTeMIIE2jCBkQYIKwYBBQUHAQEEgYQwgYEwPgYIKwYBBQUH
+                    MAGGMmh0dHA6Ly9vY3NwLmVjaS5iY2UuZWMvZWpiY2EvcHVibGljd2ViL3N0YXR1cy9vY3NwMD8G
+                    CCsGAQUFBzABhjNodHRwOi8vb2NzcDEuZWNpLmJjZS5lYy9lamJjYS9wdWJsaWN3ZWIvc3RhdHVz
+                    L29jc3AwGgYKKwYBBAGCqDsDAQQMEwoxODAyMzE3OTIzMBwGCisGAQQBgqg7AwIEDhMMQU5HRUwg
+                    WEFWSUVSMBQGCisGAQQBgqg7AwMEBhMETEFSQTAXBgorBgEEAYKoOwMEBAkTB1BFUkFMVEEwIQYK
+                    KwYBBAGCqDsDBQQTExFKRUZFIERFIFNFQ0NJT04gMzBBBgorBgEEAYKoOwMGBDMTMUVNUFJFU0Eg
+                    RUxFQ1RSSUNBIEFNQkFUTyBSRUdJT05BTCBDRU5UUk8gTk9SVEUgU0EwMAYKKwYBBAGCqDsDBwQi
+                    EyBBViAxMiBERSBOT1ZJRU1CUkUgMTEyOSBZIEVTUEVKTzAZBgorBgEEAYKoOwMIBAsTCTAzMjk5
+                    ODYwMDAWBgorBgEEAYKoOwMJBAgTBkFtYmF0bzAXBgorBgEEAYKoOwMMBAkTB0VDVUFET1IwHQYK
+                    KwYBBAGCqDsDCwQPEw0xODkwMDAxNDM5MDAxMEEGCisGAQQBgqg7AwoEMxMxRU1QUkVTQSBFTEVD
+                    VFJJQ0EgQU1CQVRPIFJFR0lPTkFMIENFTlRSTyBOT1JURSBTQTAgBgorBgEEAYKoOwMzBBITEFNP
+                    RlRXQVJFLUFSQ0hJVk8wHQYDVR0RBBYwFIESeGxhcmFAZWVhc2EuY29tLmVjMIIB3wYDVR0fBIIB
+                    1jCCAdIwggHOoIIByqCCAcaGgdVsZGFwOi8vYmNlcWxkYXBzdWJwMS5iY2UuZWMvY249Q1JMMzEx
+                    LGNuPUFDJTIwQkFOQ08lMjBDRU5UUkFMJTIwREVMJTIwRUNVQURPUixsPVFVSVRPLG91PUVOVElE
+                    QUQlMjBERSUyMENFUlRJRklDQUNJT04lMjBERSUyMElORk9STUFDSU9OLUVDSUJDRSxvPUJBTkNP
+                    JTIwQ0VOVFJBTCUyMERFTCUyMEVDVUFET1IsYz1FQz9jZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0
+                    P2Jhc2WGNGh0dHA6Ly93d3cuZWNpLmJjZS5lYy9DUkwvZWNpX2JjZV9lY19jcmxmaWxlY29tYi5j
+                    cmykgbUwgbIxCzAJBgNVBAYTAkVDMSIwIAYDVQQKExlCQU5DTyBDRU5UUkFMIERFTCBFQ1VBRE9S
+                    MTcwNQYDVQQLEy5FTlRJREFEIERFIENFUlRJRklDQUNJT04gREUgSU5GT1JNQUNJT04tRUNJQkNF
+                    MQ4wDAYDVQQHEwVRVUlUTzElMCMGA1UEAxMcQUMgQkFOQ08gQ0VOVFJBTCBERUwgRUNVQURPUjEP
+                    MA0GA1UEAxMGQ1JMMzExMAsGA1UdDwQEAwIFIDAfBgNVHSMEGDAWgBQY+fD75jIcmWY5KsqLsml9
+                    SSe/zjAdBgNVHQ4EFgQU7L9cbKo5ZZSnLPtSZ5xA/tLCVH8wCQYDVR0TBAIwADAZBgkqhkiG9n0H
+                    QQAEDDAKGwRWOC4xAwIEkDANBgkqhkiG9w0BAQsFAAOCAgEAL4H+ElLnggibE+ouQkVkf7YM9X5L
+                    dusPtf0yvXpNNNCc4VwECRd/qTLT8LFpb41zyLVxxBSumbAkM1BIP2h4H2EkaCy9+LyK7ruX4RGE
+                    6qocp8cu6RUtsaxQFA0ntpt/RGJ5iw3/waZXtMAU8Mw9NTU6x6a+rJPTzXE8RULR7DuGcRfDFRJD
+                    Ckek6tsVvgGcNtOAK7orNc850AgMzUE9rjEg2I6AOBGVf/gSU3M0RBcqCXHM/DS7UQeeF6AGnRfE
+                    pgzKSLy+JcN71S2Sn6k1lbKkxmIpT8Van+PA7xjjv1FPjKFc82pyrxhQKNvVTU3xl6K3K+vxNZQM
+                    fNtOMSM7dISbc3CsGI9XAqTIL/n/0VJeGyByGEtZxVYyisb2Xyk+MAgbxnRwOoC17WrUgJ30Au1N
+                    04GBHU4Xy1VjcimRhoPJK/7p57bCeE6tCrQYI//8ojOdYVBoxo1VZuCP4K/O0OU8dUfdaTgBEQ6t
+                    GXG9zrT7IO1SqOyNZzxX3TPxARTNGXSES0aQIK3RVZv1F5mViH1PKeTMVJsu6n/GxFmMDlS4w3Dk
+                    1zUjPuG1n4GMBUjK7JCUC2crOr9OJjomoysvE32yR9DGQwBdjXGDf9HfuZfWxXCXcg3vUIlPA+hy
+                    hgcv8dqMXnFi5lSD9ykmpLqTvuG/g2mjMHxkMaSv8W0fIvI=
+                </ds:X509Certificate>
+            </ds:X509Data>
+            <ds:KeyValue>
+                <ds:RSAKeyValue>
+                    <ds:Modulus>
+                        zQNLrPEYlPOQJGU/uc+hJUs0oNUTQiaZAE+O9NWKdB/W7yNTCpOhSE9rUNwiFigSuvCt0KDQ3wsY
+                        kim5FcG7mtO8Ld/chTfb7yNsbn52dcNCpD0NMv+Cyb4chiAndfc7I2uiH+U0FxMhKRRQgZpNUnzT
+                        jiqwVODioyhmzGJfIkdkTaf4cY6NghKDoQY9L/uBTkUwahcahObz8D5vLAQW5s0IZFHG0tAzLCWL
+                        koaRvbBIHgEwuhFWTiG3QUaJEV9qBx17Wct7IqTe3pqnppMD6FLaMtNdsudc7DYlAZfypMI/bFGO
+                        SfdEt5dla0hEPjjtuK8TIvZ93xh0HBPNmUlKuQ==
+                    </ds:Modulus>
+                    <ds:Exponent>AQAB</ds:Exponent>
+                </ds:RSAKeyValue>
+            </ds:KeyValue>
+        </ds:KeyInfo>
+        <ds:Object Id="Signature637002-Object695043">
+            <etsi:QualifyingProperties Target="#Signature637002">
+                <etsi:SignedProperties Id="Signature637002-SignedProperties932763">
+                    <etsi:SignedSignatureProperties>
+                        <etsi:SigningTime>2016-09-19T16:17:53-05:00</etsi:SigningTime>
+                        <etsi:SigningCertificate>
+                            <etsi:Cert>
+                                <etsi:CertDigest>
+                                    <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                                    <ds:DigestValue>dfDC8Rs9X//ZuRv5eQHBf53m/Bw=</ds:DigestValue>
+                                </etsi:CertDigest>
+                                <etsi:IssuerSerial>
+                                    <ds:X509IssuerName>CN=AC BANCO CENTRAL DEL ECUADOR,L=QUITO,OU=ENTIDAD DE CERTIFICACION DE
+                                        INFORMACION-ECIBCE,O=BANCO CENTRAL DEL ECUADOR,C=EC
+                                    </ds:X509IssuerName>
+                                    <ds:X509SerialNumber>1313223503</ds:X509SerialNumber>
+                                </etsi:IssuerSerial>
+                            </etsi:Cert>
+                        </etsi:SigningCertificate>
+                    </etsi:SignedSignatureProperties>
+                    <etsi:SignedDataObjectProperties>
+                        <etsi:DataObjectFormat ObjectReference="#Reference-ID-869803">
+                            <etsi:Description>Comprobante</etsi:Description>
+                            <etsi:MimeType>text/xml</etsi:MimeType>
+                        </etsi:DataObjectFormat>
+                    </etsi:SignedDataObjectProperties>
+                </etsi:SignedProperties>
+            </etsi:QualifyingProperties>
+        </ds:Object>
+    </ds:Signature>
+</factura>

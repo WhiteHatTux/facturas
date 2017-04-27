@@ -15,6 +15,7 @@ class TestDataCreator {
     final String testBill = this.getClass().getResource("/testBill.xml").text
     final String testBill1 = this.getClass().getResource("/testBill1.xml").text
     final String testComprobante = this.getClass().getResource("/testComprobante.xml").text
+    final String testComprobante1 = this.getClass().getResource("/testComprobante1.xml").text
     final String testNotificationData = this.getClass().getResource("/testnotificationData.html").text
 
     public static final Integer testAccount = 194799
@@ -47,6 +48,7 @@ class TestDataCreator {
             expectedResultBill.discounts = 0.0
             expectedResultBill.identification = "0200989077"
             expectedResultBill.issued = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-10-18 00:00:00")
+            expectedResultBill.dateOfNecessaryPayment = new SimpleDateFormat("yyyy-MM-dd").parse("2016-10-28")
             expectedResultBill.total = 27.51
             expectedResultBill.xmlNumber = 6069973
             expectedResultBill.xml = testComprobante
@@ -60,9 +62,10 @@ class TestDataCreator {
             expectedResultBill.discounts = 0.0
             expectedResultBill.identification = "0200989077"
             expectedResultBill.issued = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-09-18 00:00:00")
+            expectedResultBill.dateOfNecessaryPayment = new SimpleDateFormat("yyyy-MM-dd").parse("2016-09-28")
             expectedResultBill.total = 16.64
             expectedResultBill.xmlNumber = 5810666
-            expectedResultBill.xml = testBill
+            expectedResultBill.xml = testComprobante
             return expectedResultBill
         } else if(age == 2) {
             Bill expectedResultBill = new Bill(testAccount)
@@ -75,7 +78,7 @@ class TestDataCreator {
             expectedResultBill.issued = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-08-18 00:00:00")
             expectedResultBill.total = 1.91
             expectedResultBill.xmlNumber = 5552016
-            expectedResultBill.xml = testBill1
+            expectedResultBill.xml = testComprobante1
             return expectedResultBill
         }
     }

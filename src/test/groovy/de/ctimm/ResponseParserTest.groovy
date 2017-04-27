@@ -28,7 +28,7 @@ class ResponseParserTest extends GroovyTestCase {
 
     TestDataCreator testDataCreator = new TestDataCreator()
     String testResponseHtml = testDataCreator.testResponse
-    String testBill = testDataCreator.testBill
+    String testBill = testDataCreator.testBill1
     String testComprobante = testDataCreator.testComprobante
     String testNotificationData = testDataCreator.testNotificationData
 
