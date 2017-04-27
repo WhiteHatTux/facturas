@@ -31,7 +31,7 @@ class AdminController {
     @Autowired
     private OwnerService ownerService
 
-    @RequestMapping(value = "accountList", method = RequestMethod.GET)
+    @RequestMapping(value = "accounts", method = RequestMethod.GET)
     public ResponseEntity<List<Integer>> getAccountList() {
         return new ResponseEntity<>(ownerService.getAccountList(), HttpStatus.OK)
     }
