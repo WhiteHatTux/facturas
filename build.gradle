@@ -43,6 +43,7 @@ dependencies {
     compile('org.springframework:spring-web:4.3.3.RELEASE')
     compile('org.springframework.boot:spring-boot-starter-aop')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('com.h2database:h2:1.4.192')
     compile('org.codehaus.groovy:groovy-all')
     compile('org.jsoup:jsoup:1.10.1')
