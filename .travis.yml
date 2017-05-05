@@ -4,10 +4,10 @@ jdk:
 
 services:
   - docker
-before_install:
-  - docker build -t whitehattux/facturas .
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - docker build -t whitehattux/facturas .
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       docker push whitehattux/facturas;
