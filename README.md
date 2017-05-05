@@ -2,9 +2,9 @@
 
 This is a small spring-boot-application that reads open data from the electricity company of Ambato, Ecuador and displays the data as json.
 
-###Badges
+### Badges
 
-![travis-status](https://travis-ci.org/WhiteHatTux/facturas.svg?branch=master)
+[![travis-status](https://travis-ci.org/WhiteHatTux/facturas.svg?branch=master)](https://travis-ci.org/WhiteHatTux/facturas)
 [![codecov](https://codecov.io/gh/WhiteHatTux/facturas/branch/master/graph/badge.svg)](https://codecov.io/gh/WhiteHatTux/facturas)
 
 ![powered by electricity](http://forthebadge.com/images/featured/featured-powered-by-electricity.svg)
